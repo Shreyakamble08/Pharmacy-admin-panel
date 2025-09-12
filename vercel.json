@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/login", "dest": "/Login/login.html" },
+    { "src": "/dashboard", "dest": "/Dashboard/dashboard.html" },
+    { "src": "/inventory", "dest": "/Inventory/inventory.html" },
+    { "src": "/prescriptions", "dest": "/Prescriptions/prescription.html" },
+    { "src": "/product-management", "dest": "/Product Management/productmanagement.html" }
+  ]
+}
