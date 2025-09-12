@@ -1,0 +1,37 @@
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f9fafb;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #60a5fa; /* Light blue for scrollbar */
+      border-radius: 4px;
+    }
+    /* Sidebar collapsed state */
+    .sidebar-collapsed .nav-text {
+      display: none;
+    }
+    .sidebar-collapsed .nav-icon {
+      margin-right: 0;
+      text-align: center;
+      width: 100%;
+    }
+    .sidebar-collapsed nav a {
+      justify-content: center;
+    }
+    /* Stats card animation */
+    .stats-card {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    #expiryChart {
+  height: 100px !important; /* Set your desired height */
+}
+

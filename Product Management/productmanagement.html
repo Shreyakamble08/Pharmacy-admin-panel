@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Sidebar -->
+    <div class="flex h-screen">
+        <div class="w-64 bg-white shadow-lg">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-blue-600">Pharmacy Admin</h1>
+            </div>
+            <nav class="mt-6">
+                <button onclick="showSection('dashboard')" class="nav-btn w-full text-left px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center">
+                    <i data-feather="home" class="w-5 h-5 mr-3"></i>
+                    Dashboard
+                </button>
+                <button onclick="showSection('categories')" class="nav-btn w-full text-left px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center">
+                    <i data-feather="folder" class="w-5 h-5 mr-3"></i>
+                    Categories
+                </button>
+                <button onclick="showSection('products')" class="nav-btn w-full text-left px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center">
+                    <i data-feather="package" class="w-5 h-5 mr-3"></i>
+                    Products
+                </button>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <header class="bg-white shadow-sm border-b p-6">
+                <h2 id="page-title" class="text-2xl font-semibold text-gray-800">Dashboard</h2>
+            </header>
+
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="content-section p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Total Categories</p>
+                                <p id="total-categories" class="text-2xl font-bold text-blue-600">7</p>
+                            </div>
+                            <i data-feather="folder" class="w-8 h-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Total Products</p>
+                                <p id="total-products" class="text-2xl font-bold text-green-600">0</p>
+                            </div>
+                            <i data-feather="package" class="w-8 h-8 text-green-600"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Active Products</p>
+                                <p id="active-products" class="text-2xl font-bold text-purple-600">0</p>
+                            </div>
+                            <i data-feather="check-circle" class="w-8 h-8 text-purple-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-sm border">
+                    <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button onclick="showSection('categories')" class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+                            <i data-feather="plus" class="w-6 h-6 mx-auto mb-2 text-gray-600"></i>
+                            <p class="text-gray-600">Add New Category</p>
+                        </button>
+                        <button onclick="showSection('products')" class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors">
+                            <i data-feather="package" class="w-6 h-6 mx-auto mb-2 text-gray-600"></i>
+                            <p class="text-gray-600">Add New Product</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Section -->
+            <div id="categories-section" class="content-section hidden p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-semibold">Manage Categories</h3>
+                    <button onclick="showCategoryForm()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+                        <i data-feather="plus" class="w-4 h-4 mr-2"></i>
+                        Add Category
+                    </button>
+                </div>
+
+                <!-- Category Form -->
+                <div id="category-form" class="hidden bg-white p-6 rounded-lg shadow-sm border mb-6">
+                    <h4 class="text-lg font-semibold mb-4">Add New Category</h4>
+                    <form id="categoryForm" onsubmit="addCategory(event)">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Category Name</label>
+                                <input type="text" name="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Category Code</label>
+                                <input type="text" name="code" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea name="description" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Subcategories (one per line)</label>
+                            <textarea name="subcategories" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Prescription Medicines&#10;Over-the-Counter (OTC) Medicines&#10;Chronic Care"></textarea>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                                Save Category
+                            </button>
+                            <button type="button" onclick="hideCategoryForm()" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Categories List -->
+                <div class="bg-white rounded-lg shadow-sm border">
+                    <div class="p-6">
+                        <h4 class="text-lg font-semibold mb-4">Categories List</h4>
+                        <div id="categories-list" class="space-y-4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div id="products-section" class="content-section hidden p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-semibold">Manage Products</h3>
+                    <button onclick="showProductForm()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center">
+                        <i data-feather="plus" class="w-4 h-4 mr-2"></i>
+                        Add Product
+                    </button>
+                </div>
+
+                <!-- Product Form -->
+                <div id="product-form" class="hidden bg-white p-6 rounded-lg shadow-sm border mb-6">
+                    <h4 class="text-lg font-semibold mb-4">Add New Product</h4>
+                    <form id="productForm" onsubmit="addProduct(event)">
+                        <!-- Basic Information -->
+                        <div class="mb-6">
+                            <h5 class="text-md font-medium text-gray-800 mb-3">Basic Information</h5>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
+                                    <input type="text" name="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                    <select name="category" required onchange="updateProductForm()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                        <option value="">Select Category</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Subcategory</label>
+                                    <select name="subcategory" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                        <option value="">Select Subcategory</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Price (₹)</label>
+                                    <input type="number" name="price" step="0.01" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Upload Section -->
+                        <div class="mb-6">
+                            <h5 class="text-md font-medium text-gray-800 mb-3">Product Images (Optional, max 4)</h5>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div class="image-upload-container">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Image 1</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="file" name="image1" accept="image/*" class="image-input hidden">
+                                        <button type="button" onclick="triggerImageInput(this)" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300">Choose File</button>
+                                        <span class="image-name text-sm text-gray-500">No file chosen</span>
+                                    </div>
+                                    <div class="image-preview mt-2 hidden">
+                                        <img class="h-20 rounded-lg border">
+                                    </div>
+                                </div>
+                                <div class="image-upload-container">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Image 2</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="file" name="image2" accept="image/*" class="image-input hidden">
+                                        <button type="button" onclick="triggerImageInput(this)" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300">Choose File</button>
+                                        <span class="image-name text-sm text-gray-500">No file chosen</span>
+                                    </div>
+                                    <div class="image-preview mt-2 hidden">
+                                        <img class="h-20 rounded-lg border">
+                                    </div>
+                                </div>
+                                <div class="image-upload-container">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Image 3</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="file" name="image3" accept="image/*" class="image-input hidden">
+                                        <button type="button" onclick="triggerImageInput(this)" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300">Choose File</button>
+                                        <span class="image-name text-sm text-gray-500">No file chosen</span>
+                                    </div>
+                                    <div class="image-preview mt-2 hidden">
+                                        <img class="h-20 rounded-lg border">
+                                    </div>
+                                </div>
+                                <div class="image-upload-container">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Image 4</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="file" name="image4" accept="image/*" class="image-input hidden">
+                                        <button type="button" onclick="triggerImageInput(this)" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300">Choose File</button>
+                                        <span class="image-name text-sm text-gray-500">No file chosen</span>
+                                    </div>
+                                    <div class="image-preview mt-2 hidden">
+                                        <img class="h-20 rounded-lg border">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Fields Container -->
+                        <div id="dynamic-fields" class="mb-6"></div>
+
+                        <!-- Common Fields -->
+                        <div class="mb-6">
+                            <h5 class="text-md font-medium text-gray-800 mb-3">Additional Information</h5>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Stock Quantity</label>
+                                    <input type="number" name="stock" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                    <select name="status" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                        <option value="out-of-stock">Out of Stock</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                <textarea name="description" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                                Save Product
+                            </button>
+                            <button type="button" onclick="hideProductForm()" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Product View Modal -->
+                <div id="product-view-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                    <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-3/4 lg:w-2/3 max-h-screen overflow-y-auto">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-semibold">Product Details</h3>
+                                <button onclick="hideProductView()" class="text-gray-500 hover:text-gray-700">
+                                    <i data-feather="x" class="w-6 h-6"></i>
+                                </button>
+                            </div>
+                            <div id="product-view-content" class="space-y-4">
+                                <!-- Product details will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products List -->
+                <div class="bg-white rounded-lg shadow-sm border">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-lg font-semibold">Products List</h4>
+                            <div class="flex gap-2">
+                                <select id="category-filter" onchange="filterProducts()" class="p-2 border border-gray-300 rounded-lg">
+                                    <option value="">All Categories</option>
+                                </select>
+                                <input type="text" id="search-products" onkeyup="searchProducts()" placeholder="Search products..." class="p-2 border border-gray-300 rounded-lg">
+                            </div>
+                        </div>
+                        <div id="products-list" class="space-y-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let categories = [];
+        let products = [];
+
+        // Initialize default categories
+        const defaultCategories = [
+            {
+                id: 1,
+                name: "Medicines & Healthcare",
+                code: "MEDICINE",
+                description: "Prescription and OTC medicines",
+                subcategories: ["Prescription Medicines", "Over-the-Counter (OTC) Medicines", "Chronic Care", "First Aid & Emergency", "Pain Relief & Fever", "Allergy & Cold Care", "Digestive Health"]
+            },
+            {
+                id: 2,
+                name: "Mother Care & Maternity",
+                code: "MATERNITY",
+                description: "Products for expectant and new mothers",
+                subcategories: ["Maternity Wear", "Pregnancy Nutrition", "Skincare for Moms", "Trimester Kits", "Postpartum Recovery", "Breastfeeding Essentials"]
+            },
+            {
+                id: 3,
+                name: "Baby Care",
+                code: "BABY",
+                description: "Products for infants and toddlers",
+                subcategories: ["Diapers & Wipes", "Baby Skin & Hair Care", "Feeding & Nursing", "Baby Health & Safety", "Toys & Learning", "Baby Clothing & Accessories"]
+            },
+            {
+                id: 4,
+                name: "Wellness & Personal Care",
+                code: "WELLNESS",
+                description: "Health and personal care products",
+                subcategories: ["Vitamins & Supplements", "Skin & Hair Care", "Oral Care", "Menstrual & Intimate Care", "Fitness & Weight Management"]
+            },
+            {
+                id: 5,
+                name: "Medical Devices & Equipment",
+                code: "DEVICES",
+                description: "Medical monitoring and support devices",
+                subcategories: ["Monitoring Devices", "Mobility Aids", "Respiratory Care"]
+            },
+            {
+                id: 6,
+                name: "Speciality Care",
+                code: "SPECIALTY",
+                description: "Specialized healthcare products",
+                subcategories: ["Women's Health", "Men's Health", "Senior Care", "Immunity Boosters", "Ayurveda & Herbal Products"]
+            },
+            {
+                id: 7,
+                name: "Community & Services",
+                code: "SERVICES",
+                description: "Healthcare services and consultations",
+                subcategories: ["Doctor Consultation", "Pharmacist Advice", "Pregnancy Tracker Tools", "Health Articles & Blogs"]
+            }
+        ];
+
+        // Dynamic form configurations for different categories
+        const categoryFormConfigs = {
+            MEDICINE: [
+                { label: "Generic Name", name: "generic_name", type: "text" },
+                { label: "Brand", name: "brand", type: "text" },
+                { label: "Dosage Form", name: "dosage_form", type: "select", options: ["Tablet", "Capsule", "Syrup", "Injection", "Cream", "Drops"] },
+                { label: "Strength", name: "strength", type: "text", placeholder: "e.g., 500mg, 10ml" },
+                { label: "Prescription Required", name: "prescription_required", type: "checkbox" },
+                { label: "Expiry Date", name: "expiry_date", type: "date" },
+                { label: "Manufacturer", name: "manufacturer", type: "text" }
+            ],
+            MATERNITY: [
+                { label: "Size", name: "size", type: "select", options: ["XS", "S", "M", "L", "XL", "XXL"] },
+                { label: "Material", name: "material", type: "text" },
+                { label: "Pregnancy Stage", name: "pregnancy_stage", type: "select", options: ["1st Trimester", "2nd Trimester", "3rd Trimester", "Postpartum"] },
+                { label: "Color", name: "color", type: "text" }
+            ],
+            BABY: [
+                { label: "Age Group", name: "age_group", type: "select", options: ["0-3 months", "3-6 months", "6-12 months", "1-2 years", "2+ years"] },
+                { label: "Size", name: "size", type: "text" },
+                { label: "Material", name: "material", type: "text" },
+                { label: "Safety Certified", name: "safety_certified", type: "checkbox" }
+            ],
+            WELLNESS: [
+                { label: "Serving Size", name: "serving_size", type: "text" },
+                { label: "Ingredients", name: "ingredients", type: "textarea" },
+                { label: "Benefits", name: "benefits", type: "textarea" },
+                { label: "Usage Instructions", name: "usage_instructions", type: "textarea" }
+            ],
+            DEVICES: [
+                { label: "Brand", name: "brand", type: "text" },
+                { label: "Model", name: "model", type: "text" },
+                { label: "Warranty Period", name: "warranty", type: "text" },
+                { label: "Power Source", name: "power_source", type: "select", options: ["Battery", "Electric", "Manual"] },
+                { label: "CE Certified", name: "ce_certified", type: "checkbox" }
+            ],
+            SPECIALTY: [
+                { label: "Target Gender", name: "target_gender", type: "select", options: ["Male", "Female", "Unisex"] },
+                { label: "Age Range", name: "age_range", type: "text" },
+                { label: "Active Ingredients", name: "active_ingredients", type: "textarea" },
+                { label: "Ayurvedic", name: "is_ayurvedic", type: "checkbox" }
+            ],
+            SERVICES: [
+                { label: "Service Type", name: "service_type", type: "select", options: ["Consultation", "Tracking", "Educational", "Advisory"] },
+                { label: "Duration", name: "duration", type: "text" },
+                { label: "Provider", name: "provider", type: "text" },
+                { label: "Online Service", name: "is_online", type: "checkbox" }
+            ]
+        };
+
+        // Initialize app
+        function initApp() {
+            categories = [...defaultCategories];
+            renderCategories();
+            updateCategoryDropdowns();
+            updateDashboard();
+            setupImageUploads();
+            feather.replace();
+        }
+
+        // Setup image upload functionality
+        function setupImageUploads() {
+            // Add event listeners to all image inputs
+            document.querySelectorAll('.image-input').forEach(input => {
+                input.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    const container = this.closest('.image-upload-container');
+                    const preview = container.querySelector('.image-preview');
+                    const imageName = container.querySelector('.image-name');
+                    const img = preview.querySelector('img');
+                    
+                    if (file) {
+                        imageName.textContent = file.name;
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            img.src = e.target.result;
+                            preview.classList.remove('hidden');
+                        }
+                        reader.readAsDataURL(file);
+                    } else {
+                        imageName.textContent = 'No file chosen';
+                        preview.classList.add('hidden');
+                    }
+                });
+            });
+        }
+
+        // Trigger file input when button is clicked
+        function triggerImageInput(button) {
+            const container = button.closest('.image-upload-container');
+            const input = container.querySelector('.image-input');
+            input.click();
+        }
+
+        // Navigation
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
+            
+            // Show selected section
+            document.getElementById(section + '-section').classList.remove('hidden');
+            
+            // Update page title
+            const titles = {
+                dashboard: 'Dashboard',
+                categories: 'Categories Management',
+                products: 'Products Management'
+            };
+            document.getElementById('page-title').textContent = titles[section];
+            
+            // Update active nav
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-50', 'text-blue-600');
+            });
+            event.target.classList.add('bg-blue-50', 'text-blue-600');
+            
+            feather.replace();
+        }
+
+        // Category Management
+        function showCategoryForm() {
+            document.getElementById('category-form').classList.remove('hidden');
+        }
+
+        function hideCategoryForm() {
+            document.getElementById('category-form').classList.add('hidden');
+            document.getElementById('categoryForm').reset();
+        }
+
+        function addCategory(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            const category = {
+                id: categories.length + 1,
+                name: formData.get('name'),
+                code: formData.get('code').toUpperCase(),
+                description: formData.get('description'),
+                subcategories: formData.get('subcategories').split('\n').filter(s => s.trim())
+            };
+            
+            categories.push(category);
+            renderCategories();
+            updateCategoryDropdowns();
+            updateDashboard();
+            hideCategoryForm();
+            
+            showNotification('Category added successfully!', 'success');
+        }
+
+        function deleteCategory(id) {
+            if (confirm('Are you sure you want to delete this category?')) {
+                categories = categories.filter(cat => cat.id !== id);
+                renderCategories();
+                updateCategoryDropdowns();
+                updateDashboard();
+                showNotification('Category deleted successfully!', 'success');
+            }
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categories-list');
+            container.innerHTML = '';
+            
+            categories.forEach(category => {
+                const categoryEl = document.createElement('div');
+                categoryEl.className = 'border rounded-lg p-4';
+                categoryEl.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h5 class="font-semibold text-gray-800">${category.name}</h5>
+                            <p class="text-sm text-gray-600 mb-2">${category.description}</p>
+                            <div class="flex flex-wrap gap-1">
+                                ${category.subcategories.map(sub => `<span class="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">${sub}</span>`).join('')}
+                            </div>
+                        </div>
+                        <button onclick="deleteCategory(${category.id})" class="text-red-600 hover:text-red-800">
+                            <i data-feather="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(categoryEl);
+            });
+            
+            feather.replace();
+        }
+
+        // Product Management
+        function showProductForm() {
+            document.getElementById('product-form').classList.remove('hidden');
+        }
+
+        function hideProductForm() {
+            document.getElementById('product-form').classList.add('hidden');
+            document.getElementById('productForm').reset();
+            document.getElementById('dynamic-fields').innerHTML = '';
+            
+            // Reset image previews
+            document.querySelectorAll('.image-preview').forEach(preview => {
+                preview.classList.add('hidden');
+            });
+            document.querySelectorAll('.image-name').forEach(el => {
+                el.textContent = 'No file chosen';
+            });
+            document.querySelectorAll('.image-input').forEach(input => {
+                input.value = '';
+            });
+        }
+
+        function updateCategoryDropdowns() {
+            const selects = document.querySelectorAll('select[name="category"]');
+            selects.forEach(select => {
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Category</option>';
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.code;
+                    option.textContent = category.name;
+                    if (category.code === currentValue) option.selected = true;
+                    select.appendChild(option);
+                });
+            });
+            
+            // Update filter dropdown
+            const filterSelect = document.getElementById('category-filter');
+            if (filterSelect) {
+                const currentValue = filterSelect.value;
+                filterSelect.innerHTML = '<option value="">All Categories</option>';
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.code;
+                    option.textContent = category.name;
+                    if (category.code === currentValue) option.selected = true;
+                    filterSelect.appendChild(option);
+                });
+            }
+        }
+
+        function updateProductForm() {
+            const categorySelect = document.querySelector('select[name="category"]');
+            const subcategorySelect = document.querySelector('select[name="subcategory"]');
+            const dynamicFields = document.getElementById('dynamic-fields');
+            
+            const selectedCategory = categories.find(cat => cat.code === categorySelect.value);
+            
+            // Update subcategories
+            subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
+            if (selectedCategory) {
+                selectedCategory.subcategories.forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub;
+                    option.textContent = sub;
+                    subcategorySelect.appendChild(option);
+                });
+            }
+            
+            // Generate dynamic fields
+            dynamicFields.innerHTML = '';
+            if (selectedCategory && categoryFormConfigs[selectedCategory.code]) {
+                const config = categoryFormConfigs[selectedCategory.code];
+                const fieldsHTML = `
+                    <h5 class="text-md font-medium text-gray-800 mb-3">Category Specific Fields</h5>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${config.map(field => {
+                            switch (field.type) {
+                                case 'select':
+                                    return `
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">${field.label}</label>
+                                            <select name="${field.name}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                                <option value="">Select ${field.label}</option>
+                                                ${field.options.map(option => `<option value="${option}">${option}</option>`).join('')}
+                                            </select>
+                                        </div>
+                                    `;
+                                case 'textarea':
+                                    return `
+                                        <div class="md:col-span-2">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">${field.label}</label>
+                                            <textarea name="${field.name}" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="${field.placeholder || ''}"></textarea>
+                                        </div>
+                                    `;
+                                case 'checkbox':
+                                    return `
+                                        <div class="flex items-center">
+                                            <input type="checkbox" name="${field.name}" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500">
+                                            <label class="ml-2 text-sm font-medium text-gray-700">${field.label}</label>
+                                        </div>
+                                    `;
+                                default:
+                                    return `
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">${field.label}</label>
+                                            <input type="${field.type}" name="${field.name}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="${field.placeholder || ''}">
+                                        </div>
+                                    `;
+                            }
+                        }).join('')}
+                    </div>
+                `;
+                dynamicFields.innerHTML = fieldsHTML;
+            }
+        }
+
+        function addProduct(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            const product = {
+                id: products.length + 1,
+                name: formData.get('name'),
+                category: formData.get('category'),
+                subcategory: formData.get('subcategory'),
+                price: parseFloat(formData.get('price')),
+                stock: parseInt(formData.get('stock')),
+                status: formData.get('status'),
+                description: formData.get('description'),
+                createdAt: new Date().toISOString(),
+                images: [],
+                dynamicFields: {}
+            };
+            
+            // Process images
+            for (let i = 1; i <= 4; i++) {
+                const imageInput = form.querySelector(`input[name="image${i}"]`);
+                if (imageInput && imageInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        product.images.push(e.target.result);
+                    };
+                    reader.readAsDataURL(imageInput.files[0]);
+                }
+            }
+            
+            // Add dynamic fields
+            const selectedCategory = categories.find(cat => cat.code === product.category);
+            if (selectedCategory && categoryFormConfigs[selectedCategory.code]) {
+                categoryFormConfigs[selectedCategory.code].forEach(field => {
+                    const value = field.type === 'checkbox' 
+                        ? formData.has(field.name)
+                        : formData.get(field.name);
+                    product.dynamicFields[field.name] = value;
+                });
+            }
+            
+            // Use setTimeout to ensure images are processed before adding the product
+            setTimeout(() => {
+                products.push(product);
+                renderProducts();
+                updateDashboard();
+                hideProductForm();
+                
+                showNotification('Product added successfully!', 'success');
+            }, 100);
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                products = products.filter(prod => prod.id !== id);
+                renderProducts();
+                updateDashboard();
+                showNotification('Product deleted successfully!', 'success');
+            }
+        }
+
+        function viewProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+            
+            const category = categories.find(cat => cat.code === product.category);
+            const statusColors = {
+                active: 'bg-green-100 text-green-800',
+                inactive: 'bg-gray-100 text-gray-800',
+                'out-of-stock': 'bg-red-100 text-red-800'
+            };
+            
+            // Generate images HTML
+            let imagesHTML = '';
+            if (product.images && product.images.length > 0) {
+                imagesHTML = `
+                    <div class="border-t pt-4 mt-4">
+                        <h4 class="text-lg font-semibold mb-3">Product Images</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            ${product.images.map((img, index) => `
+                                <div class="border rounded-lg overflow-hidden">
+                                    <img src="${img}" alt="Product Image ${index + 1}" class="w-full h-40 object-cover">
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            let dynamicFieldsHTML = '';
+            if (Object.keys(product.dynamicFields).length > 0) {
+                dynamicFieldsHTML = `
+                    <div class="border-t pt-4 mt-4">
+                        <h4 class="text-lg font-semibold mb-3">Additional Details</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${Object.entries(product.dynamicFields).map(([key, value]) => 
+                                value ? `<div class="bg-gray-50 p-3 rounded-lg">
+                                    <span class="block text-sm font-medium text-gray-500">${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
+                                    <span class="block mt-1 text-gray-800">${typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value}</span>
+                                </div>` : ''
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            const content = document.getElementById('product-view-content');
+            content.innerHTML = `
+                <div class="bg-white rounded-lg p-6 border">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800">${product.name}</h3>
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="px-3 py-1 rounded-full text-sm font-medium ${statusColors[product.status]}">${product.status}</span>
+                                <span class="text-gray-500">ID: #${product.id}</span>
+                            </div>
+                        </div>
+                        <span class="text-2xl font-bold text-green-600">₹${product.price}</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3">Basic Information</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <span class="block text-sm font-medium text-gray-500">Category</span>
+                                    <span class="block text-gray-800">${category ? category.name : 'Unknown'}</span>
+                                </div>
+                                <div>
+                                    <span class="block text-sm font-medium text-gray-500">Subcategory</span>
+                                    <span class="block text-gray-800">${product.subcategory || 'N/A'}</span>
+                                </div>
+                                <div>
+                                    <span class="block text-sm font-medium text-gray-500">Stock Quantity</span>
+                                    <span class="block text-gray-800">${product.stock}</span>
+                                </div>
+                                <div>
+                                    <span class="block text-sm font-medium text-gray-500">Added On</span>
+                                    <span class="block text-gray-800">${new Date(product.createdAt).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3">Description</h4>
+                            <p class="text-gray-700">${product.description || 'No description available'}</p>
+                        </div>
+                    </div>
+                    
+                    ${imagesHTML}
+                    ${dynamicFieldsHTML}
+                </div>
+            `;
+            
+            document.getElementById('product-view-modal').classList.remove('hidden');
+            feather.replace();
+        }
+
+        function hideProductView() {
+            document.getElementById('product-view-modal').classList.add('hidden');
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('products-list');
+            container.innerHTML = '';
+            
+            let filteredProducts = products;
+            
+            // Apply category filter
+            const categoryFilter = document.getElementById('category-filter').value;
+            if (categoryFilter) {
+                filteredProducts = filteredProducts.filter(prod => prod.category === categoryFilter);
+            }
+            
+            // Apply search filter
+            const searchTerm = document.getElementById('search-products').value.toLowerCase();
+            if (searchTerm) {
+                filteredProducts = filteredProducts.filter(prod => 
+                    prod.name.toLowerCase().includes(searchTerm) ||
+                    prod.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (filteredProducts.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No products found.</p>';
+                return;
+            }
+            
+            filteredProducts.forEach(product => {
+                const category = categories.find(cat => cat.code === product.category);
+                const statusColors = {
+                    active: 'bg-green-100 text-green-800',
+                    inactive: 'bg-gray-100 text-gray-800',
+                    'out-of-stock': 'bg-red-100 text-red-800'
+                };
+                
+                // Get first image for thumbnail or use placeholder
+                const thumbnail = product.images && product.images.length > 0 
+                    ? product.images[0] 
+                    : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zNiAyNEwyNCAzNk0yNCAyNEwzNiAzNiIgc3Ryb2tlPSIjRDREOEREIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIxMCIgc3Ryb2tlPSIjRDREOEREIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+';
+                
+                const productEl = document.createElement('div');
+                productEl.className = 'border rounded-lg p-4 hover:shadow-md transition-shadow';
+                productEl.innerHTML = `
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0">
+                            <img src="${thumbnail}" alt="${product.name}" class="w-16 h-16 object-cover rounded-lg border">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h5 class="font-semibold text-gray-800">${product.name}</h5>
+                                        <span class="px-2 py-1 rounded-full text-xs ${statusColors[product.status]}">${product.status}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mb-2">${category ? category.name : 'Unknown Category'} > ${product.subcategory || 'N/A'}</p>
+                                    <p class="text-sm text-gray-600 mb-2 line-clamp-2">${product.description || 'No description'}</p>
+                                    <div class="flex items-center gap-4 text-sm">
+                                        <span class="font-medium text-green-600">₹${product.price}</span>
+                                        <span class="text-gray-600">Stock: ${product.stock}</span>
+                                        <span class="text-gray-500">ID: #${product.id}</span>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2 ml-4">
+                                    <button onclick="viewProduct(${product.id})" class="text-blue-600 hover:text-blue-800 p-1" title="View Product">
+                                        <i data-feather="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button onclick="editProduct(${product.id})" class="text-blue-600 hover:text-blue-800 p-1" title="Edit Product">
+                                        <i data-feather="edit-2" class="w-4 h-4"></i>
+                                    </button>
+                                    <button onclick="deleteProduct(${product.id})" class="text-red-600 hover:text-red-800 p-1" title="Delete Product">
+                                        <i data-feather="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ${Object.keys(product.dynamicFields).length > 0 ? `
+                                <div class="border-t pt-3 mt-3">
+                                    <h6 class="text-xs font-medium text-gray-700 mb-2">Additional Details:</h6>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                        ${Object.entries(product.dynamicFields).map(([key, value]) => 
+                                            value ? `<div class="text-xs">
+                                                <span class="text-gray-500">${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</span>
+                                                <span class="text-gray-700 ml-1">${typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value}</span>
+                                            </div>` : ''
+                                        ).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(productEl);
+            });
+            
+            feather.replace();
+        }
+
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+            
+            showProductForm();
+            
+            // Populate form fields
+            const form = document.getElementById('productForm');
+            form.querySelector('[name="name"]').value = product.name;
+            form.querySelector('[name="category"]').value = product.category;
+            form.querySelector('[name="price"]').value = product.price;
+            form.querySelector('[name="stock"]').value = product.stock;
+            form.querySelector('[name="status"]').value = product.status;
+            form.querySelector('[name="description"]').value = product.description;
+            
+            // Trigger category change to load subcategories and dynamic fields
+            updateProductForm();
+            
+            setTimeout(() => {
+                form.querySelector('[name="subcategory"]').value = product.subcategory;
+                
+                // Populate dynamic fields
+                Object.entries(product.dynamicFields).forEach(([key, value]) => {
+                    const field = form.querySelector(`[name="${key}"]`);
+                    if (field) {
+                        if (field.type === 'checkbox') {
+                            field.checked = value;
+                        } else {
+                            field.value = value;
+                        }
+                    }
+                });
+                
+                // TODO: Populate image fields (this would require more complex handling for editing)
+            }, 100);
+            
+            // Change form submission to update instead of create
+            form.onsubmit = function(event) {
+                event.preventDefault();
+                updateProduct(id, event.target);
+            };
+        }
+
+        function updateProduct(id, form) {
+            const formData = new FormData(form);
+            const productIndex = products.findIndex(p => p.id === id);
+            
+            if (productIndex === -1) return;
+            
+            const updatedProduct = {
+                ...products[productIndex],
+                name: formData.get('name'),
+                category: formData.get('category'),
+                subcategory: formData.get('subcategory'),
+                price: parseFloat(formData.get('price')),
+                stock: parseInt(formData.get('stock')),
+                status: formData.get('status'),
+                description: formData.get('description'),
+                dynamicFields: {}
+            };
+            
+            // Process new images if any
+            for (let i = 1; i <= 4; i++) {
+                const imageInput = form.querySelector(`input[name="image${i}"]`);
+                if (imageInput && imageInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (!updatedProduct.images) updatedProduct.images = [];
+                        updatedProduct.images[i-1] = e.target.result;
+                    };
+                    reader.readAsDataURL(imageInput.files[0]);
+                }
+            }
+            
+            // Update dynamic fields
+            const selectedCategory = categories.find(cat => cat.code === updatedProduct.category);
+            if (selectedCategory && categoryFormConfigs[selectedCategory.code]) {
+                categoryFormConfigs[selectedCategory.code].forEach(field => {
+                    const value = field.type === 'checkbox' 
+                        ? formData.has(field.name)
+                        : formData.get(field.name);
+                    updatedProduct.dynamicFields[field.name] = value;
+                });
+            }
+            
+            // Use setTimeout to ensure images are processed before updating the product
+            setTimeout(() => {
+                products[productIndex] = updatedProduct;
+                renderProducts();
+                updateDashboard();
+                hideProductForm();
+                
+                // Reset form submission
+                document.getElementById('productForm').onsubmit = addProduct;
+                
+                showNotification('Product updated successfully!', 'success');
+            }, 100);
+        }
+
+        function filterProducts() {
+            renderProducts();
+        }
+
+        function searchProducts() {
+            renderProducts();
+        }
+
+        // Dashboard
+        function updateDashboard() {
+            document.getElementById('total-categories').textContent = categories.length;
+            document.getElementById('total-products').textContent = products.length;
+            document.getElementById('active-products').textContent = products.filter(p => p.status === 'active').length;
+        }
+
+        // Utility functions
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500 text-white' : 
+                type === 'error' ? 'bg-red-500 text-white' : 
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Initialize app when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+            showSection('dashboard');
+        });
+    </script>
+</body>
+</html>

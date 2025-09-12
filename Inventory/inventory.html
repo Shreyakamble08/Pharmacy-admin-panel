@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PharmaCare - Inventory Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="inventory.css">
+</head>
+<body class="bg-gray-50 h-screen flex overflow-hidden">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="w-64 bg-blue-600 text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static md:translate-x-0 -translate-x-full">
+    <div class="p-4 border-b border-blue-500 sticky top-0 bg-blue-600 z-10 flex justify-between items-center">
+      <button id="toggle-sidebar-logo" class="flex items-center">
+        <img src="https://via.placeholder.com/32" alt="PharmaCare Logo" class="w-8 h-8 mr-2" id="sidebar-logo">
+        <span id="sidebar-title" class="text-2xl font-bold">PharmaCare</span>
+        <i id="sidebar-arrow" class="fas fa-chevron-right ml-2 transition-transform duration-300"></i>
+      </button>
+      <button id="close-sidebar" class="md:hidden text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <nav class="flex-1 overflow-y-auto py-4">
+      <div class="px-4 py-2 text-sm text-blue-200 uppercase nav-text">Main</div>
+      <a href="../Dashboard/dashboard.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-home mr-3 nav-icon text-blue-200"></i><span class="nav-text">Dashboard</span></a>
+      <a href="../Inventory/inventory.html" class="flex items-center py-3 px-4 bg-blue-700"><i class="fas fa-pills mr-3 nav-icon text-blue-200"></i><span class="nav-text">Inventory</span></a>
+      <a href="../Prescriptions/prescription.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-prescription mr-3 nav-icon text-blue-200"></i><span class="nav-text">Prescriptions</span></a>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-users mr-3 nav-icon text-blue-200"></i><span class="nav-text">Customers</span></a>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-shopping-cart mr-3 nav-icon text-blue-200"></i><span class="nav-text">Sales</span></a>
+      <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Reports</div>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-chart-line mr-3 nav-icon text-blue-200"></i><span class="nav-text">Analytics</span></a>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-invoice mr-3 nav-icon text-blue-200"></i><span class="nav-text">Reports</span></a>
+      <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Admin</div>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-user-shield mr-3 nav-icon text-blue-200"></i><span class="nav-text">Users</span></a>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-cog mr-3 nav-icon text-blue-200"></i><span class="nav-text">Settings</span></a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Header -->
+      <header class="bg-white shadow sticky top-0 z-10">
+      <div class="flex justify-between items-center p-4">
+        <div class="flex items-center">
+          <button id="toggle-sidebar-mobile" class="text-gray-500 mr-4 md:hidden"><i class="fas fa-bars"></i></button>
+          <h1 class="text-xl font-semibold text-gray-800">Inventory Management</h1>
+        </div>
+        <div class="flex items-center">
+          <div class="relative mr-4">
+            <input type="text" placeholder="Search..." class="border rounded-full py-2 px-4 w-64 bg-white border-grey-400" />
+            <i class="fas fa-search absolute right-3 top-3 text-blue-500"></i>
+          </div>
+          <div class="relative mr-4">
+            <i class="fas fa-bell text-gray-600 text-xl"></i>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-red-100 rounded-full text-xs w-5 h-5 flex items-center justify-center">3</span>
+          </div>
+          <div class="flex items-center">
+            <div id="user-initials" class="w-10 h-10 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-lg font-semibold"></div>
+            <div class="ml-2">
+              <span id="user-name" class="text-gray-800"></span>
+              <span id="user-role" class="text-gray-500 text-sm block"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Inventory Content -->
+    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+      <!-- Overview Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <div class="bg-white rounded-xl border-l-4 border-blue-500 shadow-md p-5 hover:shadow-lg transition-shadow duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500 text-sm font-medium">Total Medicines</p>
+              <h2 id="total-items" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+            </div>
+            <div class="bg-blue-100 p-3 rounded-full">
+              <i class="fas fa-pills text-blue-500 text-xl"></i>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl border-l-4 border-yellow-500 shadow-md p-5 hover:shadow-lg transition-shadow duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500 text-sm font-medium">Medium Stock</p>
+              <h2 id="medium-stock" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+            </div>
+            <div class="bg-yellow-100 p-3 rounded-full">
+              <i class="fas fa-exclamation-circle text-yellow-500 text-xl"></i>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl border-l-4 border-orange-500 shadow-md p-5 hover:shadow-lg transition-shadow duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500 text-sm font-medium">Low Stock</p>
+              <h2 id="low-stock" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+            </div>
+            <div class="bg-orange-100 p-3 rounded-full">
+              <i class="fas fa-exclamation-triangle text-orange-500 text-xl"></i>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl border-l-4 border-red-500 shadow-md p-5 hover:shadow-lg transition-shadow duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500 text-sm font-medium">Expired/Expiring Soon</p>
+              <h2 id="expired" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+            </div>
+            <div class="bg-red-100 p-3 rounded-full">
+              <i class="fas fa-hourglass-end text-red-500 text-xl"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <h2 class="text-xl font-semibold text-gray-800">Inventory Items</h2>
+        <div class="flex flex-wrap items-center gap-3">
+          <input id="search" type="text" placeholder="Search by name or batch..." class="border rounded-lg py-2 px-4 w-full md:w-56 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition" />
+          <select id="filter-category" class="border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-auto">
+            <option value="">All Categories</option>
+            <option value="Tablet">Tablet</option>
+            <option value="Syrup">Syrup</option>
+            <option value="Injection">Injection</option>
+            <option value="Ointment">Ointment</option>
+          </select>
+          <button id="add-medicine" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow-md whitespace-nowrap"><i class="fas fa-plus mr-2"></i>Add Medicine</button>
+          <button id="bulk-upload" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow-md whitespace-nowrap"><i class="fas fa-upload mr-2"></i>Bulk Upload</button>
+          <button id="export-csv" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow-md whitespace-nowrap"><i class="fas fa-download mr-2"></i>Export CSV</button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-container bg-white rounded-lg shadow overflow-x-auto">
+        <table id="inventoryTable" class="min-w-full display">
+          <thead>
+            <tr>
+              <th class="w-16">Sr. No.</th>
+              <th>Product Name</th>
+              <th>Category</th>
+              <th>Generic Name</th>
+              <th>Batch No.</th>
+              <th>Quantity</th>
+              <th>Reorder Level</th>
+              <th>Cost Price</th>
+              <th>Selling Price</th>
+              <th>Expiry Date</th>
+              <th>Supplier Name</th>
+              <th>Storage Location</th>
+              <th>Prescription</th>
+              <th class="w-40">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTableBody" class="text-gray-700"></tbody>
+        </table>
+      </div>
+
+      <!-- Add/Edit Modal -->
+      <div id="medicineModal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="closeModal">&times;</span>
+          <h2 id="modalTitle" class="text-xl font-semibold text-gray-800 mb-6">Add Medicine</h2>
+          <form id="medicineForm" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label for="name">Product Name</label>
+              <input id="name" type="text" required class="w-full" />
+            </div>
+            <div>
+              <label for="category">Category</label>
+              <select id="category" required class="w-full">
+                <option value="">Select Category</option>
+                <option value="Tablet">Tablet</option>
+                <option value="Syrup">Syrup</option>
+                <option value="Injection">Injection</option>
+                <option value="Ointment">Ointment</option>
+              </select>
+            </div>
+            <div>
+              <label for="genericName">Generic Name</label>
+              <input id="genericName" type="text" required class="w-full" />
+            </div>
+            <div>
+              <label for="brand">Brand/Manufacturer</label>
+              <input id="brand" type="text" required class="w-full" />
+            </div>
+            <div>
+              <label for="batchNumber">Batch Number</label>
+              <input id="batchNumber" type="text" required class="w-full" />
+            </div>
+            <div>
+              <label for="quantity">Quantity Available</label>
+              <input id="quantity" type="number" min="0" required class="w-full" />
+            </div>
+            <div>
+              <label for="reorderLevel">Reorder Level</label>
+              <input id="reorderLevel" type="number" min="0" required class="w-full" />
+            </div>
+            <div>
+              <label for="costPrice">Cost Price</label>
+              <input id="costPrice" type="number" step="0.01" min="0" required class="w-full" />
+            </div>
+            <div>
+              <label for="sellingPrice">Selling Price</label>
+              <input id="sellingPrice" type="number" step="0.01" min="0" required class="w-full" />
+            </div>
+            <div>
+              <label for="expDate">Expiry Date</label>
+              <input id="expDate" type="text" required class="w-full flatpickr" placeholder="YYYY-MM-DD" />
+            </div>
+            <div>
+              <label for="supplierName">Supplier Name</label>
+              <input id="supplierName" type="text" required class="w-full" />
+            </div>
+            <div>
+              <label for="storageLocation">Storage Location</label>
+              <input id="storageLocation" type="text" required class="w-full" />
+            </div>
+            <div>
+              <label for="prescriptionRequired">Prescription Required</label>
+              <select id="prescriptionRequired" required class="w-full">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+            <div class="md:col-span-2">
+              <label for="description">Description</label>
+              <textarea id="description" class="w-full" rows="4"></textarea>
+            </div>
+            <div class="md:col-span-2">
+              <label for="image">Product Image</label>
+              <input id="image" type="file" accept="image/*" class="w-full p-2 border rounded-lg" />
+              <img id="imagePreview" src="" alt="Preview" class="mt-3 max-h-40 rounded-lg hidden mx-auto" />
+            </div>
+            <div class="md:col-span-2 flex justify-end gap-4 pt-4">
+              <button type="button" onclick="closeModal('medicineModal')" class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600 transition shadow-sm">Cancel</button>
+              <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition shadow-sm"><i class="fas fa-save mr-2"></i>Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- View Details Modal -->
+      <div id="detailsModal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="closeDetails">&times;</span>
+          <h2 class="text-xl font-semibold text-gray-800 mb-6">Product Details</h2>
+          <div id="detailsContent" class="text-gray-700 space-y-4"></div>
+          <img id="detailsImage" src="" alt="Product Image" class="max-h-60 mt-6 rounded-lg mx-auto hidden" />
+        </div>
+      </div>
+
+      <!-- Delete Confirmation Modal -->
+      <div id="deleteModal" class="modal">
+        <div class="modal-content max-w-md">
+          <span class="close" id="closeDelete">&times;</span>
+          <h2 class="text-xl font-semibold text-gray-800 mb-6">Confirm Delete</h2>
+          <p class="text-gray-700 mb-6">Are you sure you want to delete this item? This action cannot be undone.</p>
+          <div class="flex justify-end gap-4">
+            <button onclick="closeModal('deleteModal')" class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600 transition shadow-sm">Cancel</button>
+            <button id="confirmDelete" class="bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 transition shadow-sm"><i class="fas fa-trash mr-2"></i>Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- View History Modal -->
+      <div id="historyModal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="closeHistory">&times;</span>
+          <h2 class="text-xl font-semibold text-gray-800 mb-6">Product History</h2>
+          <div class="table-container">
+            <table class="min-w-full">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Action</th>
+                  <th>Quantity Change</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody id="historyTable" class="text-gray-700"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bulk Upload Input -->
+      <input id="bulkUploadInput" type="file" accept=".csv" class="hidden" />
+    </main>
+  </div>
+
+ <script src="inventory.js"></script>
+</body>
+</html>

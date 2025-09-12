@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PharmaCare - Prescription Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <link rel="stylesheet" href="prescription.css">
+</head>
+<body class="bg-gray-50 h-screen flex overflow-hidden">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="w-64 bg-blue-600 text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static md:translate-x-0 -translate-x-full">
+    <div class="p-4 border-b border-blue-500 sticky top-0 bg-blue-600 z-10 flex justify-between items-center">
+      <button id="toggle-sidebar-logo" class="flex items-center">
+        <img src="https://via.placeholder.com/32" alt="PharmaCare Logo" class="w-8 h-8 mr-2" id="sidebar-logo">
+        <span id="sidebar-title" class="text-2xl font-bold">PharmaCare</span>
+        <i id="sidebar-arrow" class="fas fa-chevron-right ml-2 transition-transform duration-300"></i>
+      </button>
+      <button id="close-sidebar" class="md:hidden text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <nav class="flex-1 overflow-y-auto py-4">
+      <div class="px-4 py-2 text-sm text-blue-200 uppercase nav-text">Main</div>
+      <a href="../Dashboard/dashboard.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-home mr-3 nav-icon text-blue-200"></i><span class="nav-text">Dashboard</span></a>
+      <a href="../Inventory/inventory.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-pills mr-3 nav-icon text-blue-200"></i><span class="nav-text">Inventory</span></a>
+      <a href="../Prescriptions/prescription.html" class="flex items-center py-3 px-4 bg-blue-700"><i class="fas fa-file-prescription mr-3 nav-icon text-blue-200"></i><span class="nav-text">Prescriptions</span></a>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-users mr-3 nav-icon text-blue-200"></i><span class="nav-text">Customers</span></a>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-shopping-cart mr-3 nav-icon text-blue-200"></i><span class="nav-text">Sales</span></a>
+      <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Reports</div>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-chart-line mr-3 nav-icon text-blue-200"></i><span class="nav-text">Analytics</span></a>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-invoice mr-3 nav-icon text-blue-200"></i><span class="nav-text">Reports</span></a>
+      <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Admin</div>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-user-shield mr-3 nav-icon text-blue-200"></i><span class="nav-text">Users</span></a>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-cog mr-3 nav-icon text-blue-200"></i><span class="nav-text">Settings</span></a>
+    </nav>
+  </aside>
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Header -->
+    <header class="bg-white shadow sticky top-0 z-10">
+      <div class="flex justify-between items-center p-4">
+        <div class="flex items-center">
+          <button id="toggle-sidebar-mobile" class="text-gray-500 mr-4 md:hidden"><i class="fas fa-bars"></i></button>
+          <h1 class="text-xl font-semibold text-gray-800">Prescription Management</h1>
+        </div>
+        <div class="flex items-center">
+          <div class="relative mr-4">
+            <input id="search" type="text" placeholder="Search..." class="border rounded-full py-2 px-4 w-64 bg-white border-grey-400" />
+            <i class="fas fa-search absolute right-3 top-3 text-blue-500"></i>
+          </div>
+          <div class="relative mr-4">
+            <button id="toggle-notifications" class="text-gray-600 text-xl"><i class="fas fa-bell"></i></button>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-red-100 rounded-full text-xs w-5 h-5 flex items-center justify-center">3</span>
+          </div>
+          <div class="flex items-center">
+            <div id="user-initials" class="w-10 h-10 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-lg font-semibold"></div>
+            <div class="ml-2">
+              <span id="user-name" class="text-gray-800"></span>
+              <span id="user-role" class="text-gray-500 text-sm block"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Prescription Content -->
+    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <div class="bg-white rounded-xl border-l-4 border-blue-500 shadow-md p-5 hover:shadow-lg transition-shadow duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500 text-sm font-medium">Total Orders (Overall)</p>
+              <h2 id="total-orders" class="text-2xl font-bold text-gray-800 mt-1">35</h2>
+            </div>
+            <div class="bg-blue-100 p-3 rounded-full">
+              <i class="fas fa-file-prescription text-blue-500 text-xl"></i>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl border-l-4 border-yellow-500 shadow-md p-5 hover:shadow-lg transition-shadow duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500 text-sm font-medium">Today's Orders</p>
+              <h2 id="todays-orders" class="text-2xl font-bold text-gray-800 mt-1">4</h2>
+            </div>
+            <div class="bg-yellow-100 p-3 rounded-full">
+              <i class="fas fa-clock text-yellow-500 text-xl"></i>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl border-l-4 border-green-500 shadow-md p-5 hover:shadow-lg transition-shadow duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500 text-sm font-medium">Approved Orders</p>
+              <h2 id="approved-orders" class="text-2xl font-bold text-gray-800 mt-1">12</h2>
+            </div>
+            <div class="bg-green-100 p-3 rounded-full">
+              <i class="fas fa-box text-green-500 text-xl"></i>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl border-l-4 border-red-500 shadow-md p-5 hover:shadow-lg transition-shadow duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500 text-sm font-medium">Rejected Orders</p>
+              <h2 id="rejected-orders" class="text-2xl font-bold text-gray-800 mt-1">3</h2>
+            </div>
+            <div class="bg-red-100 p-3 rounded-full">
+              <i class="fas fa-hourglass-end text-red-500 text-xl"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prescription List -->
+      <div class="bg-white rounded-xl shadow-md p-5 mb-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+          <h2 class="text-xl font-semibold text-gray-800">Prescription List</h2>
+          <div class="flex flex-wrap items-center gap-3">
+            <input id="date-from" type="text" placeholder="From Date" class="border rounded-lg py-2 px-4 w-full md:w-40 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition" />
+            <input id="date-to" type="text" placeholder="To Date" class="border rounded-lg py-2 px-4 w-full md:w-40 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition" />
+            <select id="filter-status" class="border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-auto">
+              <option value="">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+              <!-- <option value="Dispensed">Dispensed</option>
+              <option value="Expired">Expired</option> -->
+            </select>
+            <button id="add-prescription" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow-md whitespace-nowrap"><i class="fas fa-plus mr-2"></i>Add Prescription</button>
+            <button id="export-reports" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow-md whitespace-nowrap"><i class="fas fa-download mr-2"></i>Export Reports</button>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table id="prescriptionsTable" class="min-w-full display">
+            <thead>
+              <tr>
+                <th class="w-16">Sr. No.</th>
+                <th>Prescription ID</th>
+                <th>Patient Name</th>
+                <th>Doctor Name</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th class="w-48">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="prescriptionsTableBody" class="text-gray-700"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- History Module -->
+      <div class="bg-white rounded-xl shadow-md p-5">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+          <h2 class="text-xl font-semibold text-gray-800">Prescription History</h2>
+          <div class="flex flex-wrap items-center gap-3">
+            <button id="filter-this-week" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition">This Week</button>
+            <button id="filter-last-week" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition">Last Week</button>
+            <button id="filter-this-month" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition">This Month</button>
+            <input id="history-date-from" type="text" placeholder="From Date" class="border rounded-lg py-2 px-4 w-full md:w-40 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition" />
+            <input id="history-date-to" type="text" placeholder="To Date" class="border rounded-lg py-2 px-4 w-full md:w-40 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition" />
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table id="historyTable" class="min-w-full display">
+            <thead>
+              <tr>
+                <th class="w-16">Sr. No.</th>
+                <th>Prescription ID</th>
+                <th>Patient Name</th>
+                <th>Doctor Name</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody" class="text-gray-700"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Notification Overlay -->
+      <div id="notificationModal" class="modal hidden">
+        <div class="modal-content max-w-2xl overflow-y-auto max-h-[80vh] bg-white rounded-xl shadow-2xl p-6">
+          <span class="close cursor-pointer text-gray-500 hover:text-gray-800 text-2xl font-bold" id="closeNotifications">&times;</span>
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Notifications / Alerts</h2>
+          <div class="overflow-x-auto">
+            <table id="notificationsTable" class="min-w-full display">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Message</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody id="notificationsTableBody" class="text-gray-700"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add/Edit Prescription Modal -->
+      <div id="prescriptionModal" class="modal">
+        <div class="modal-content overflow-y-auto max-h-[80vh]">
+          <span class="close cursor-pointer"  id="closeModal">&times;</span>
+          <h2 id="modalTitle" class="text-xl font-semibold text-gray-800 mb-6">Add Prescription</h2>
+          <form id="prescriptionForm" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="md:col-span-2">
+              <h3 class="text-lg font-medium text-gray-700 mb-2">Patient Details</h3>
+            </div>
+            <div>
+              <label for="patientName">Patient Name</label>
+              <input id="patientName" type="text" required class="w-full" />
+            </div>
+            <div>
+              <label for="patientAge">Age</label>
+              <input id="patientAge" type="number" min="0" required class="w-full" />
+            </div>
+            <div>
+              <label for="patientContact">Contact</label>
+              <input id="patientContact" type="text" required class="w-full" />
+            </div>
+            <div class="md:col-span-2 mt-4">
+              <h3 class="text-lg font-medium text-gray-700 mb-2">Doctor Details</h3>
+            </div>
+            <div>
+              <label for="doctorName">Doctor Name</label>
+              <input id="doctorName" type="text" required class="w-full" />
+            </div>
+            <div>
+              <label for="doctorRegNo">Registration No.</label>
+              <input id="doctorRegNo" type="text" required class="w-full" />
+            </div>
+            <div class="md:col-span-2 mt-4">
+              <h3 class="text-lg font-medium text-gray-700 mb-2">Medicine Details</h3>
+              <div id="medicineList" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 medicine-entry">
+                  <input type="text" placeholder="Drug Name" class="w-full" required />
+                  <input type="text" placeholder="Dosage" class="w-full" required />
+                  <input type="number" placeholder="Quantity" min="1" class="w-full" required />
+                  <input type="text" placeholder="Duration" class="w-full" required />
+                </div>
+              </div>
+              <button type="button" id="addMedicine" class="mt-2 text-blue-600 hover:underline"><i class="fas fa-plus mr-1"></i>Add Another Medicine</button>
+            </div>
+            <div class="md:col-span-2 mt-4">
+              <label for="notes">Notes</label>
+              <textarea id="notes" class="w-full" rows="3"></textarea>
+            </div>
+            <div class="md:col-span-2 flex justify-end gap-4 pt-4">
+              <button type="button" onclick="closeModal('prescriptionModal')" class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600 transition shadow-sm">Cancel</button>
+              <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition shadow-sm"><i class="fas fa-save mr-2"></i>Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+   <!-- Updated: Verification Modal with Button Fixed -->
+<div id="verificationModal" class="modal hidden">
+  <div class="modal-content overflow-y-auto max-h-[80vh] bg-white rounded-xl shadow-2xl p-6 relative">
+    
+    <!-- Close button -->
+    <span 
+      class="close cursor-pointer text-gray-500 hover:text-gray-800 text-2xl font-bold absolute top-4 right-6" 
+      id="closeVerification">&times;</span>
+
+    <!-- Title -->
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">Prescription Verification</h2>
+    
+    <!-- Dynamic details container -->
+    <div id="verificationDetails" class="text-gray-700 space-y-3 bg-gray-50 p-4 rounded-lg mb-4">
+      <!-- Populated dynamically by jQuery/JS -->
+    </div>
+
+    <!-- Button fixed at bottom -->
+    <div class="flex justify-center">
+      <button id="view-prescription-images" 
+        class="bg-blue-600 text-white py-2 px-4 justify-center rounded-lg hover:bg-blue-700 transition">
+        View Prescription Images
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Image Overlay Modal -->
+<div id="imageOverlay" class="modal hidden">
+  <div class="modal-content max-w-3xl overflow-y-auto max-h-[80vh] bg-white rounded-xl shadow-2xl p-6 relative">
+    
+    <!-- Close button -->
+    <span 
+      class="close cursor-pointer text-gray-500 hover:text-gray-800 text-2xl font-bold absolute top-4 right-6" 
+      id="closeImageOverlay">&times;</span>
+
+    <!-- Title -->
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Prescription Images</h2>
+
+    <!-- Dynamic images -->
+    <div id="prescriptionImages" class="flex flex-col gap-4 overflow-y-auto max-h-[60vh]">
+      <!-- Images populated dynamically -->
+    </div>
+  </div>
+</div>
+
+      <!-- Patient Profile Modal -->
+      <div id="patientModal" class="modal">
+        <div class="modal-content overflow-y-auto max-h-[80vh]">
+          <span class="close" id="closePatient">&times;</span>
+          <h2 class="text-xl font-semibold text-gray-800 mb-6">Patient Profile</h2>
+          <div id="patientInfo" class="text-gray-700 space-y-4">
+            <p><strong>Name:</strong> Sarah Johnson</p>
+            <p><strong>Age:</strong> 42</p>
+            <p><strong>Contact:</strong> (555) 123-4567</p>
+            <p><strong>Email:</strong> sarah.j@example.com</p>
+            <p><strong>Address:</strong> 123 Oak Street, Springfield</p>
+          </div>
+          <h3 class="text-lg font-medium text-gray-700 mt-6 mb-2">Prescription History</h3>
+          <div class="overflow-x-auto">
+            <table id="patientHistoryTable" class="min-w-full">
+              <thead>
+                <tr>
+                  <th>Prescription ID</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="patientHistoryBody" class="text-gray-700">
+                <tr>
+                  <td>RX-1025</td>
+                  <td>2023-11-15</td>
+                  <td><span class="status-badge status-approved">Approved</span></td>
+                </tr>
+                <tr>
+                  <td>RX-1008</td>
+                  <td>2023-10-28</td>
+                  <td><span class="status-badge status-dispensed">Dispensed</span></td>
+                </tr>
+                <tr>
+                  <td>RX-0987</td>
+                  <td>2023-09-15</td>
+                  <td><span class="status-badge status-dispensed">Dispensed</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3 class="text-lg font-medium text-gray-700 mt-6 mb-2">Allergies / Notes</h3>
+          <div id="patientNotes" class="text-gray-700">
+            <p>Allergic to Penicillin. Prefers generic medications when available.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctor Management Modal -->
+      <div id="doctorModal" class="modal">
+        <div class="modal-content overflow-y-auto max-h-[80vh]">
+          <span class="close" id="closeDoctor">&times;</span>
+          <h2 class="text-xl font-semibold text-gray-800 mb-6">Doctor Details</h2>
+          <div id="doctorInfo" class="text-gray-700 space-y-4">
+            <p><strong>Name:</strong> Dr. Emily Martinez</p>
+            <p><strong>Registration No:</strong> MD-123456</p>
+            <p><strong>Specialization:</strong> Internal Medicine</p>
+            <p><strong>Contact:</strong> (555) 987-6543</p>
+            <p><strong>Clinic:</strong> Springfield Medical Center</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="prescriptions.js"></script>
+</body>
+</html>
