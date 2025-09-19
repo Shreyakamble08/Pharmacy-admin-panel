@@ -11,15 +11,16 @@
   <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<link rel="stylesheet" href="inventory.css">
+  <link rel="stylesheet" href="inventory.css">
+ <link rel="stylesheet" href="inventory.css">
 </head>
 <body class="bg-gray-50 h-screen flex overflow-hidden">
   <!-- Sidebar -->
   <aside id="sidebar" class="w-64 bg-blue-600 text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static md:translate-x-0 -translate-x-full">
     <div class="p-4 border-b border-blue-500 sticky top-0 bg-blue-600 z-10 flex justify-between items-center">
       <button id="toggle-sidebar-logo" class="flex items-center">
-        <img src="https://via.placeholder.com/32" alt="PharmaCare Logo" class="w-8 h-8 mr-2" id="sidebar-logo">
-        <span id="sidebar-title" class="text-2xl font-bold">PharmaCare</span>
+        <img src="Images/logo.png" alt="PharmaCare Logo" class="w-8 h-8 mr-2" id="sidebar-logo">
+        <span id="sidebar-title" class="text-2xl font-bold">GoodNews</span>
         <i id="sidebar-arrow" class="fas fa-chevron-right ml-2 transition-transform duration-300"></i>
       </button>
       <button id="close-sidebar" class="md:hidden text-white"><i class="fas fa-times"></i></button>
@@ -27,15 +28,14 @@
     <nav class="flex-1 overflow-y-auto py-4">
       <div class="px-4 py-2 text-sm text-blue-200 uppercase nav-text">Main</div>
       <a href="../Dashboard/dashboard.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-home mr-3 nav-icon text-blue-200"></i><span class="nav-text">Dashboard</span></a>
-      <a href="../Inventory/inventory.html" class="flex items-center py-3 px-4 bg-blue-700"><i class="fas fa-pills mr-3 nav-icon text-blue-200"></i><span class="nav-text">Inventory</span></a>
+      <a href="../Inventory/inventory.html" class="flex items-center py-3 px-4 bg-blue-700"><i class="fas fa-pills mr-3 nav-icon text-blue-200"></i><span class="nav-text">Inventory Management</span></a>
       <a href="../Prescriptions/prescription.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-prescription mr-3 nav-icon text-blue-200"></i><span class="nav-text">Prescriptions</span></a>
-      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-users mr-3 nav-icon text-blue-200"></i><span class="nav-text">Customers</span></a>
-      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-shopping-cart mr-3 nav-icon text-blue-200"></i><span class="nav-text">Sales</span></a>
+      <a href="../Customer/customer management.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-users mr-3 nav-icon text-blue-200"></i><span class="nav-text">Customers Management</span></a>
+      <a href="../Order/ordermanagment.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-shopping-cart mr-3 nav-icon text-blue-200"></i><span class="nav-text">Order Management</span></a>
+      <a href="../Product Management/product.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-box mr-3 nav-icon text-blue-200"></i><span class="nav-text">Product / Category Management </span></a>
       <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Reports</div>
-      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-chart-line mr-3 nav-icon text-blue-200"></i><span class="nav-text">Analytics</span></a>
-      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-invoice mr-3 nav-icon text-blue-200"></i><span class="nav-text">Reports</span></a>
+      <a href="../Reports/report.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-invoice mr-3 nav-icon text-blue-200"></i><span class="nav-text">Reports</span></a>
       <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Admin</div>
-      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-user-shield mr-3 nav-icon text-blue-200"></i><span class="nav-text">Users</span></a>
       <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-cog mr-3 nav-icon text-blue-200"></i><span class="nav-text">Settings</span></a>
     </nav>
   </aside>
@@ -43,7 +43,7 @@
   <!-- Main Content -->
   <div class="flex-1 flex flex-col overflow-hidden">
     <!-- Header -->
-      <header class="bg-white shadow sticky top-0 z-10">
+    <header class="bg-white shadow sticky top-0 z-10">
       <div class="flex justify-between items-center p-4">
         <div class="flex items-center">
           <button id="toggle-sidebar-mobile" class="text-gray-500 mr-4 md:hidden"><i class="fas fa-bars"></i></button>
@@ -51,7 +51,7 @@
         </div>
         <div class="flex items-center">
           <div class="relative mr-4">
-            <input type="text" placeholder="Search..." class="border rounded-full py-2 px-4 w-64 bg-white border-grey-400" />
+            <input type="text" placeholder="Search..." class="border rounded-full py-2 px-4 w-64 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition" />
             <i class="fas fa-search absolute right-3 top-3 text-blue-500"></i>
           </div>
           <div class="relative mr-4">
@@ -170,11 +170,11 @@
           <form id="medicineForm" class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label for="name">Product Name</label>
-              <input id="name" type="text" required class="w-full" />
+              <input id="name" type="text" required class="w-full border rounded-lg p-2" />
             </div>
             <div>
               <label for="category">Category</label>
-              <select id="category" required class="w-full">
+              <select id="category" required class="w-full border rounded-lg p-2">
                 <option value="">Select Category</option>
                 <option value="Tablet">Tablet</option>
                 <option value="Syrup">Syrup</option>
@@ -184,59 +184,74 @@
             </div>
             <div>
               <label for="genericName">Generic Name</label>
-              <input id="genericName" type="text" required class="w-full" />
+              <input id="genericName" type="text" required class="w-full border rounded-lg p-2" />
             </div>
             <div>
               <label for="brand">Brand/Manufacturer</label>
-              <input id="brand" type="text" required class="w-full" />
+              <input id="brand" type="text" required class="w-full border rounded-lg p-2" />
             </div>
             <div>
               <label for="batchNumber">Batch Number</label>
-              <input id="batchNumber" type="text" required class="w-full" />
+              <input id="batchNumber" type="text" required class="w-full border rounded-lg p-2" />
             </div>
             <div>
               <label for="quantity">Quantity Available</label>
-              <input id="quantity" type="number" min="0" required class="w-full" />
+              <input id="quantity" type="number" min="0" required class="w-full border rounded-lg p-2" />
             </div>
             <div>
               <label for="reorderLevel">Reorder Level</label>
-              <input id="reorderLevel" type="number" min="0" required class="w-full" />
+              <input id="reorderLevel" type="number" min="0" required class="w-full border rounded-lg p-2" />
             </div>
             <div>
               <label for="costPrice">Cost Price</label>
-              <input id="costPrice" type="number" step="0.01" min="0" required class="w-full" />
+              <input id="costPrice" type="number" step="0.01" min="0" required class="w-full border rounded-lg p-2" />
             </div>
             <div>
               <label for="sellingPrice">Selling Price</label>
-              <input id="sellingPrice" type="number" step="0.01" min="0" required class="w-full" />
+              <input id="sellingPrice" type="number" step="0.01" min="0" required class="w-full border rounded-lg p-2" />
             </div>
             <div>
               <label for="expDate">Expiry Date</label>
-              <input id="expDate" type="text" required class="w-full flatpickr" placeholder="YYYY-MM-DD" />
+              <input id="expDate" type="text" required class="w-full flatpickr border rounded-lg p-2" placeholder="YYYY-MM-DD" />
             </div>
             <div>
               <label for="supplierName">Supplier Name</label>
-              <input id="supplierName" type="text" required class="w-full" />
+              <input id="supplierName" type="text" required class="w-full border rounded-lg p-2" />
             </div>
             <div>
               <label for="storageLocation">Storage Location</label>
-              <input id="storageLocation" type="text" required class="w-full" />
+              <input id="storageLocation" type="text" required class="w-full border rounded-lg p-2" />
             </div>
             <div>
               <label for="prescriptionRequired">Prescription Required</label>
-              <select id="prescriptionRequired" required class="w-full">
+              <select id="prescriptionRequired" required class="w-full border rounded-lg p-2">
                 <option value="No">No</option>
                 <option value="Yes">Yes</option>
               </select>
             </div>
             <div class="md:col-span-2">
               <label for="description">Description</label>
-              <textarea id="description" class="w-full" rows="4"></textarea>
+              <textarea id="description" class="w-full border rounded-lg p-2" rows="4"></textarea>
             </div>
             <div class="md:col-span-2">
-              <label for="image">Product Image</label>
-              <input id="image" type="file" accept="image/*" class="w-full p-2 border rounded-lg" />
-              <img id="imagePreview" src="" alt="Preview" class="mt-3 max-h-40 rounded-lg hidden mx-auto" />
+              <label for="image1">Product Image 1</label>
+              <input id="image1" type="file" accept="image/*" class="w-full p-2 border rounded-lg" />
+              <img id="imagePreview1" src="" alt="Preview 1" class="image-preview hidden mx-auto" />
+            </div>
+            <div class="md:col-span-2">
+              <label for="image2">Product Image 2</label>
+              <input id="image2" type="file" accept="image/*" class="w-full p-2 border rounded-lg" />
+              <img id="imagePreview2" src="" alt="Preview 2" class="image-preview hidden mx-auto" />
+            </div>
+            <div class="md:col-span-2">
+              <label for="image3">Product Image 3</label>
+              <input id="image3" type="file" accept="image/*" class="w-full p-2 border rounded-lg" />
+              <img id="imagePreview3" src="" alt="Preview 3" class="image-preview hidden mx-auto" />
+            </div>
+            <div class="md:col-span-2">
+              <label for="image4">Product Image 4</label>
+              <input id="image4" type="file" accept="image/*" class="w-full p-2 border rounded-lg" />
+              <img id="imagePreview4" src="" alt="Preview 4" class="image-preview hidden mx-auto" />
             </div>
             <div class="md:col-span-2 flex justify-end gap-4 pt-4">
               <button type="button" onclick="closeModal('medicineModal')" class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600 transition shadow-sm">Cancel</button>
@@ -249,10 +264,17 @@
       <!-- View Details Modal -->
       <div id="detailsModal" class="modal">
         <div class="modal-content">
-          <span class="close" id="closeDetails">&times;</span>
-          <h2 class="text-xl font-semibold text-gray-800 mb-6">Product Details</h2>
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Product Details</h2>
+            <span class="close cursor-pointer text-gray-500 hover:text-red-500 text-2xl" id="closeDetails">&times;</span>
+          </div>
           <div id="detailsContent" class="text-gray-700 space-y-4"></div>
-          <img id="detailsImage" src="" alt="Product Image" class="max-h-60 mt-6 rounded-lg mx-auto hidden" />
+          <div class="relative">
+            <img id="detailsMainImage" src="" alt="Main Product Image" class="main-image hidden mx-auto my-4" />
+            <div id="detailsImageGallery" class="image-gallery"></div>
+            <button id="galleryNavLeft" class="gallery-nav gallery-nav-left hidden"><i class="fas fa-chevron-left"></i></button>
+            <button id="galleryNavRight" class="gallery-nav gallery-nav-right hidden"><i class="fas fa-chevron-right"></i></button>
+          </div>
         </div>
       </div>
 
@@ -279,6 +301,7 @@
               <thead>
                 <tr>
                   <th>Date</th>
+                  <th>Manufacturer</th>
                   <th>Action</th>
                   <th>Quantity Change</th>
                   <th>Note</th>
@@ -295,6 +318,6 @@
     </main>
   </div>
 
- <script src="inventory.js"></script>
+  <script src="inventory.js"></script>
 </body>
 </html>

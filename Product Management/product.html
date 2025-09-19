@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management Module</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="product.css">
+</head>
+<body class="bg-gray-50 h-screen flex overflow-hidden">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 bg-blue-600 text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static md:translate-x-0 -translate-x-full transition-transform duration-300">
+    <div class="p-4 border-b border-blue-500 sticky top-0 bg-blue-600 z-10 flex justify-between items-center">
+      <button id="toggle-sidebar-logo" class="flex items-center">
+        <img src="Images/logo.png" alt="PharmaCare Logo" class="w-8 h-8 mr-2" id="sidebar-logo">
+        <span id="sidebar-title" class="text-2xl font-bold">GoodNews</span>
+        <i id="sidebar-arrow" class="fas fa-chevron-right ml-2 transition-transform duration-300"></i>
+      </button>
+      <button id="close-sidebar" class="md:hidden text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <nav class="flex-1 overflow-y-auto py-4">
+      <div class="px-4 py-2 text-sm text-blue-200 uppercase nav-text">Main</div>
+      <a href="../Dashboard/dashboard.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-home mr-3 nav-icon text-blue-200"></i><span class="nav-text">Dashboard</span></a>
+      <a href="../Inventory/inventory.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-pills mr-3 nav-icon text-blue-200"></i><span class="nav-text">Inventory Management</span></a>
+      <a href="../Prescriptions/prescription.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-prescription mr-3 nav-icon text-blue-200"></i><span class="nav-text">Prescriptions</span></a>
+      <a href="../Customer/customer management.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-users mr-3 nav-icon text-blue-200"></i><span class="nav-text">Customers Management</span></a>
+      <a href="../Order/ordermanagment.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-shopping-cart mr-3 nav-icon text-blue-200"></i><span class="nav-text">Order Management</span></a>
+      <a href="../Product Management/product.html" class="flex items-center py-3 px-4 bg-blue-700"><i class="fas fa-box mr-3 nav-icon text-blue-200"></i><span class="nav-text">Product / Category Management </span></a>
+      <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Reports</div>
+      <a href="../Reports/report.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-invoice mr-3 nav-icon text-blue-200"></i><span class="nav-text">Reports</span></a>
+      <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Admin</div>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-cog mr-3 nav-icon text-blue-200"></i><span class="nav-text">Settings</span></a>
+    </nav>
+  </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+        <header class="bg-white shadow sticky top-0 z-10">
+            <div class="flex justify-between items-center p-4">
+                <div class="flex items-center">
+                    <button id="toggle-sidebar-mobile" class="text-gray-500 mr-4 md:hidden"><i class="fas fa-bars"></i></button>
+                    <h1 class="text-xl font-semibold text-gray-800">Product Management</h1>
+                </div>
+                <div class="flex items-center">
+                    <div class="relative mr-4">
+                        <input id="searchInput" type="text" placeholder="Search products..." class="border rounded-full py-2 px-4 w-64 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition" />
+                        <i class="fas fa-search absolute right-3 top-3 text-blue-500"></i>
+                    </div>
+                    <div class="relative mr-4">
+                        <button id="toggle-notifications" class="text-gray-600 text-xl"><i class="fas fa-bell"></i></button>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-red-100 rounded-full text-xs w-5 h-5 flex items-center justify-center">3</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div id="user-initials" class="w-10 h-10 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-lg font-semibold">A</div>
+                        <div class="ml-2">
+                            <span id="user-name" class="text-gray-800">Admin User</span>
+                            <span id="user-role" class="text-gray-500 text-sm block">System Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Product Content -->
+        <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl border-l-4 border-blue-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Total Products</p>
+                            <h2 id="totalProducts" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-pills text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-yellow-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Low Stock Items</p>
+                            <h2 id="lowStockItems" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-full">
+                            <i class="fas fa-exclamation-triangle text-yellow-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-green-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">In Stock Products</p>
+                            <h2 id="inStockProducts" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-red-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Expiring Soon</p>
+                            <h2 id="expiringSoon" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-red-100 p-3 rounded-full">
+                            <i class="fas fa-hourglass-end text-red-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product List -->
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Product List</h2>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <select id="categoryFilter" class="border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-40">
+                            <option value="">All Categories</option>
+                        </select>
+                        <select id="subcategoryFilter" class="border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-40">
+                            <option value="">All Subcategories</option>
+                        </select>
+                        <select id="prescriptionFilter" class="border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-48">
+                            <option value="">Prescription Required</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                        <select id="stockFilter" class="border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-40">
+                            <option value="">Stock Status</option>
+                            <option value="in-stock">In Stock</option>
+                            <option value="low-stock">Low Stock</option>
+                            <option value="out-of-stock">Out of Stock</option>
+                        </select>
+                        <button id="addProductBtn" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow-md whitespace-nowrap"><i class="fas fa-plus mr-2"></i>Add Product</button>
+                        <button id="addCategoryBtn" class="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition shadow-sm hover:shadow-md whitespace-nowrap"><i class="fas fa-plus mr-2"></i>Add Category</button>
+                        <button id="exportBtn" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition shadow-sm hover:shadow-md whitespace-nowrap"><i class="fas fa-download mr-2"></i>Export CSV</button>
+                    </div>
+                </div>
+                <div class="dataTables_wrapper">
+                    <table id="productTable" class="min-w-full display">
+                        <thead>
+                            <tr>
+                                <th class="w-16 text-center">ID</th>
+                                <th class="w-32">SKU</th>
+                                <th class="w-48">Product Name</th>
+                                <th class="w-40">Category</th>
+                                <th class="w-40">Brand</th>
+                                <th class="w-32">Stock</th>
+                                <th class="w-32">Price (₹)</th>
+                                <th class="w-40">Expiry Date</th>
+                                <th class="w-40">Prescription</th>
+                                <th class="w-48 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody" class="text-gray-700"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Product Detail Modal -->
+            <div id="productDetailModal" class="modal">
+                <div class="modal-container">
+                    <span class="close-btn" id="closeDetailModal">&times;</span>
+                    <div class="profile-header mb-3">
+                        <h2 class="text-lg font-semibold text-gray-800">Product Details</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="info-section">
+                            <h3>Basic Information</h3>
+                            <div class="info-item">
+                                <span class="info-label">ID:</span>
+                                <span class="info-value" id="detail-id"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">SKU:</span>
+                                <span class="info-value" id="detail-sku"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Name:</span>
+                                <span class="info-value" id="detail-name"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Category:</span>
+                                <span class="info-value" id="detail-category"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Subcategory:</span>
+                                <span class="info-value" id="detail-type"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Brand:</span>
+                                <span class="info-value" id="detail-brand"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Prescription:</span>
+                                <span class="info-value" id="detail-prescription"></span>
+                            </div>
+                        </div>
+                        <div class="info-section">
+                            <h3>Stock & Pricing</h3>
+                            <div class="info-item">
+                                <span class="info-label">Quantity:</span>
+                                <span class="info-value" id="detail-quantity"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Unit:</span>
+                                <span class="info-value" id="detail-unit"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">MRP:</span>
+                                <span class="info-value" id="detail-mrp"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Price:</span>
+                                <span class="info-value" id="detail-price"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Batch:</span>
+                                <span class="info-value" id="detail-batch"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Expiry:</span>
+                                <span class="info-value" id="detail-expiry"></span>
+                            </div>
+                        </div>
+                        <div class="info-section md:col-span-2">
+                            <h3>Additional Information</h3>
+                            <div class="info-item">
+                                <span class="info-label">Description:</span>
+                                <span class="info-value" id="detail-description"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Storage:</span>
+                                <span class="info-value" id="detail-storage"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Stock Status:</span>
+                                <span class="info-value" id="detail-stock-status"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Added:</span>
+                                <span class="info-value" id="detail-added"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Updated:</span>
+                                <span class="info-value" id="detail-updated"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Images:</span>
+                                <div id="detail-images" class="info-value grid grid-cols-2 gap-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button id="editProductBtn" class="bg-yellow-500 text-white py-1 px-3 rounded-lg hover:bg-yellow-600 transition text-sm"><i class="fas fa-edit mr-1"></i>Edit</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add/Edit Product Modal -->
+            <div id="editProductModal" class="modal">
+                <div class="modal-container">
+                    <span class="close-btn" id="closeEditModal">&times;</span>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6" id="editModalTitle">Add New Product</h2>
+                    <form id="editProductForm" class="edit-form grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="info-section">
+                            <h3>Basic Information</h3>
+                            <div class="mb-4">
+                                <label for="edit-sku">SKU *</label>
+                                <input type="text" id="edit-sku" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-name">Product Name *</label>
+                                <input type="text" id="edit-name" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-category">Category *</label>
+                                <select id="edit-category" required>
+                                    <option value="">Select Category</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-type">Subcategory *</label>
+                                <select id="edit-type" required>
+                                    <option value="">Select Subcategory</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-brand">Brand/Manufacturer *</label>
+                                <input type="text" id="edit-brand" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-prescription">Prescription Required *</label>
+                                <select id="edit-prescription" required>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="info-section">
+                            <h3>Stock & Pricing</h3>
+                            <div class="mb-4">
+                                <label for="edit-quantity">Quantity in Stock *</label>
+                                <input type="number" id="edit-quantity" min="0" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-unit">Unit *</label>
+                                <select id="edit-unit" required>
+                                    <option value="">Select Unit</option>
+                                    <option value="Tablet Strip">Tablet Strip</option>
+                                    <option value="Bottle">Bottle</option>
+                                    <option value="Pack">Pack</option>
+                                    <option value="Tube">Tube</option>
+                                    <option value="Box">Box</option>
+                                    <option value="Piece">Piece</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-mrp">MRP (₹) *</label>
+                                <input type="number" id="edit-mrp" min="0" step="0.01" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-price">Selling Price (₹) *</label>
+                                <input type="number" id="edit-price" min="0" step="0.01" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-batch">Batch Number *</label>
+                                <input type="text" id="edit-batch" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-expiry">Expiry Date *</label>
+                                <input type="date" id="edit-expiry" required>
+                            </div>
+                        </div>
+                        <div class="info-section md:col-span-2">
+                            <h3>Additional Information</h3>
+                            <div class="mb-4">
+                                <label for="edit-description">Description</label>
+                                <textarea id="edit-description" rows="3"></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-storage">Storage Information</label>
+                                <textarea id="edit-storage" rows="2" placeholder="e.g., Keep in cool and dry place"></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-image1">Product Image 1 *</label>
+                                <input type="file" id="edit-image1" accept="image/*">
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-image2">Product Image 2 *</label>
+                                <input type="file" id="edit-image2" accept="image/*">
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-image3">Product Image 3 *</label>
+                                <input type="file" id="edit-image3" accept="image/*">
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-image4">Product Image 4 *</label>
+                                <input type="file" id="edit-image4" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="md:col-span-2 flex justify-end gap-3 mt-6">
+                            <button type="button" id="cancelEdit" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition">Cancel</button>
+                            <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Save Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Add Category Modal -->
+            <div id="addCategoryModal" class="modal">
+                <div class="modal-container" style="max-width: 600px;">
+                    <span class="close-btn" id="closeAddCategoryModal">&times;</span>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6">Add New Category</h2>
+                    <form id="addCategoryForm" class="edit-form">
+                        <div class="mb-4">
+                            <label for="new-category-name">Category Name *</label>
+                            <input type="text" id="new-category-name" required>
+                        </div>
+                        <div class="mb-4">
+                            <label>Subcategories</label>
+                            <div id="subcategories-container">
+                            </div>
+                            <button type="button" id="addSubcategoryBtn" class="bg-green-500 text-white py-1 px-3 rounded mt-2">Add Subcategory</button>
+                        </div>
+                        <div class="flex justify-end gap-3 mt-6">
+                            <button type="button" id="cancelAddCategory" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition">Cancel</button>
+                            <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Save Category</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Success Popup -->
+            <div id="successPopup" class="modal">
+                <div class="popup-container">
+                    <i id="popupIcon" class="fas fa-check-circle"></i>
+                    <p id="successMessage"></p>
+                    <button id="closeSuccessPopup">OK</button>
+                </div>
+            </div>
+        </main>
+    </div>
+<script src="product.js"></script>
+</body>
+</html>

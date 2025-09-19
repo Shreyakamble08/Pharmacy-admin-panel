@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management Module</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="order.css">
+</head>
+<body class="bg-gray-50 h-screen flex overflow-hidden">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 bg-blue-600 text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static md:translate-x-0 -translate-x-full">
+    <div class="p-4 border-b border-blue-500 sticky top-0 bg-blue-600 z-10 flex justify-between items-center">
+      <button id="toggle-sidebar-logo" class="flex items-center">
+        <img src="Images/logo.png" alt="PharmaCare Logo" class="w-8 h-8 mr-2" id="sidebar-logo">
+        <span id="sidebar-title" class="text-2xl font-bold">GoodNews</span>
+        <i id="sidebar-arrow" class="fas fa-chevron-right ml-2 transition-transform duration-300"></i>
+      </button>
+      <button id="close-sidebar" class="md:hidden text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <nav class="flex-1 overflow-y-auto py-4">
+      <div class="px-4 py-2 text-sm text-blue-200 uppercase nav-text">Main</div>
+      <a href="../Dashboard/dashboard.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-home mr-3 nav-icon text-blue-200"></i><span class="nav-text">Dashboard</span></a>
+      <a href="../Inventory/inventory.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-pills mr-3 nav-icon text-blue-200"></i><span class="nav-text">Inventory Management</span></a>
+      <a href="../Prescriptions/prescription.html" class="flex items-center py-3 px-4  hover:bg-blue-700 transition-colors"><i class="fas fa-file-prescription mr-3 nav-icon text-blue-200"></i><span class="nav-text">Prescriptions</span></a>
+      <a href="../Customer/customer management.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-users mr-3 nav-icon text-blue-200"></i><span class="nav-text">Customers Management</span></a>
+      <a href="../Order/ordermanagment.html" class="flex items-center py-3 px-4  bg-blue-700"><i class="fas fa-shopping-cart mr-3 nav-icon text-blue-200"></i><span class="nav-text">Order Management</span></a>
+      <a href="../Product Management/product.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-box mr-3 nav-icon text-blue-200"></i><span class="nav-text">Product / Category Management </span></a>
+      <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Reports</div>
+      <a href="../Reports/report.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-invoice mr-3 nav-icon text-blue-200"></i><span class="nav-text">Reports</span></a>
+      <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Admin</div>
+      <a href="#" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-cog mr-3 nav-icon text-blue-200"></i><span class="nav-text">Settings</span></a>
+    </nav>
+  </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+         <header class="bg-white shadow sticky top-0 z-10">
+      <div class="flex justify-between items-center p-4">
+        <div class="flex items-center">
+          <button id="toggle-sidebar-mobile" class="text-gray-500 mr-4 md:hidden"><i class="fas fa-bars"></i></button>
+          <h1 class="text-xl font-semibold text-gray-800">Order Management</h1>
+        </div>
+        <div class="flex items-center">
+          <div class="relative mr-4">
+            <input id="search" type="text" placeholder="Search..." class="border rounded-full py-2 px-4 w-64 bg-white border-grey-400" />
+            <i class="fas fa-search absolute right-3 top-3 text-blue-500"></i>
+          </div>
+          <div class="relative mr-4">
+            <button id="toggle-notifications" class="text-gray-600 text-xl"><i class="fas fa-bell"></i></button>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-red-100 rounded-full text-xs w-5 h-5 flex items-center justify-center">3</span>
+          </div>
+          <div class="flex items-center">
+            <div id="user-initials" class="w-10 h-10 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-lg font-semibold"></div>
+            <div class="ml-2">
+              <span id="user-name" class="text-gray-800"></span>
+              <span id="user-role" class="text-gray-500 text-sm block"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+        <!-- Order Content -->
+        <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl border-l-4 border-blue-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Total Orders</p>
+                            <h2 id="totalOrders" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-shopping-cart text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-yellow-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Pending Orders</p>
+                            <h2 id="pendingOrders" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-full">
+                            <i class="fas fa-hourglass-half text-yellow-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-green-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Delivered Orders</p>
+                            <h2 id="deliveredOrders" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-red-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Revenue Today</p>
+                            <h2 id="revenueToday" class="text-2xl font-bold text-gray-800 mt-1">₹0</h2>
+                        </div>
+                        <div class="bg-red-100 p-3 rounded-full">
+                            <i class="fas fa-rupee-sign text-red-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order List -->
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Order List</h2>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <select id="statusFilter" class="border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-40">
+                            <option value="">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                            <option value="Returned">Returned</option>
+                        </select>
+                        <select id="paymentFilter" class="border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-40">
+                            <option value="">All Payment Modes</option>
+                            <option value="COD">COD</option>
+                            <option value="Online">Online</option>
+                        </select>
+                        <input id="dateFilter" type="date" placeholder="Select Date" class="border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-40" />
+                        <button id="exportBtn" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow-md whitespace-nowrap"><i class="fas fa-download mr-2"></i>Export CSV</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table id="orderTable" class="order-table min-w-full display">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sr. No.</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Products</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Delivery Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Mode</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
+                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody" class="text-gray-700 divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Order Details Modal -->
+            <div id="orderDetailsModal" class="modal">
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h2 class="text-lg font-semibold">Order Details - <span id="modal-order-id"></span></h2>
+                        <span class="close-btn" id="closeOrderDetails">&times;</span>
+                    </div>
+                    <div class="info-section">
+                        <h3>Customer Information</h3>
+                        <div class="info-grid">
+                            <span class="info-label">Name:</span>
+                            <span class="info-value" id="order-customer-name"></span>
+                        </div>
+                        <div class="info-grid">
+                            <span class="info-label">Contact Number:</span>
+                            <span class="info-value" id="order-customer-phone"></span>
+                        </div>
+                        <div class="info-grid">
+                            <span class="info-label">Address:</span>
+                            <span class="info-value" id="order-customer-address"></span>
+                        </div>
+                        <div class="info-grid">
+                            <span class="info-label">Prescription:</span>
+                            <div class="info-value flex items-center">
+                                <span id="order-prescription"></span>
+                                <button id="approvePrescription" class="bg-green-500 text-white py-1 px-3 rounded-lg hover:bg-green-600 transition ml-2">Approve</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-section">
+                        <h3>Products List</h3>
+                        <table class="products-table">
+                            <thead>
+                                <tr>
+                                    <th>Medicine Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Discount</th>
+                                    <th>GST</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="order-products"></tbody>
+                        </table>
+                    </div>
+                    <div class="info-section">
+                        <h3>Order Summary</h3>
+                        <div class="info-grid">
+                            <span class="info-label">Subtotal:</span>
+                            <span class="info-value" id="order-subtotal"></span>
+                        </div>
+                        <div class="info-grid">
+                            <span class="info-label">Tax:</span>
+                            <span class="info-value" id="order-tax"></span>
+                        </div>
+                        <div class="info-grid">
+                            <span class="info-label">Shipping Charges:</span>
+                            <span class="info-value" id="order-shipping"></span>
+                        </div>
+                        <div class="info-grid">
+                            <span class="info-label">Grand Total:</span>
+                            <span class="info-value" id="order-grand-total"></span>
+                        </div>
+                    </div>
+                    <div class="info-section">
+                        <h3>Payment Details</h3>
+                        <div class="info-grid">
+                            <span class="info-label">Payment Status:</span>
+                            <span class="info-value" id="order-payment-status"></span>
+                        </div>
+                        <div class="info-grid">
+                            <span class="info-label">Transaction ID:</span>
+                            <span class="info-value" id="order-transaction-id"></span>
+                        </div>
+                    </div>
+                    <div class="info-section">
+                        <h3>Returns & Refunds</h3>
+                        <div class="info-grid">
+                            <span class="info-label">Return Status:</span>
+                            <span class="info-value" id="order-return-status"></span>
+                        </div>
+                        <div class="info-grid">
+                            <span class="info-label">Return Reason:</span>
+                            <span class="info-value" id="order-return-reason"></span>
+                        </div>
+                        <div class="info-grid">
+                            <span class="info-label">Refund Status:</span>
+                            <span class="info-value" id="order-refund-status"></span>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <select id="updateStatus" class="border rounded-lg bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition">
+                            <option value="Pending">Pending</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                            <option value="Returned">Returned</option>
+                        </select>
+                        <button id="saveStatus" class="bg-blue-600 text-white hover:bg-blue-700">Update Status</button>
+                        <button id="printInvoice" class="bg-green-500 text-white hover:bg-green-600"><i class="fas fa-print mr-2"></i>Print Invoice</button>
+                        <button id="cancelOrder" class="bg-red-500 text-white hover:bg-red-600"><i class="fas fa-times mr-2"></i>Cancel/Return</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invoice Modal -->
+            <div id="invoiceModal" class="modal">
+                <div class="invoice-container">
+                    <div id="invoicePrint" class="print-section">
+                        <div style="text-align: center; margin-bottom: 16px; padding: 12px; background: linear-gradient(to right, #2563eb, #3b82f6); border-radius: 8px 8px 0 0; color: #ffffff;">
+                            <h1 style="font-size: 22px; font-weight: 700; margin-bottom: 6px;">PharmaCare Invoice</h1>
+                            <p style="font-size: 12px; font-weight: 400; opacity: 0.9;">
+                                Order ID: <span id="inv-order-id"></span> | 
+                                Date: <span id="inv-order-date"></span>
+                            </p>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; padding: 0 8px;">
+                            <div>
+                                <h3 style="font-size: 15px; font-weight: 600; color: #111827; margin-bottom: 8px; border-bottom: 2px solid #10b981;">Bill To:</h3>
+                                <p id="inv-customer-name" style="font-size: 12px; color: #4b5563; line-height: 1.4;"></p>
+                                <p id="inv-customer-phone" style="font-size: 12px; color: #4b5563; line-height: 1.4;"></p>
+                                <p id="inv-customer-address" style="font-size: 12px; color: #4b5563; line-height: 1.4;"></p>
+                            </div>
+                            <div>
+                                <h3 style="font-size: 15px; font-weight: 600; color: #111827; margin-bottom: 8px; border-bottom: 2px solid #10b981;">Payment Details:</h3>
+                                <p style="font-size: 12px; color: #4b5563; line-height: 1.4;">Status: <span id="inv-payment-status" style="font-weight: 600;"></span></p>
+                                <p style="font-size: 12px; color: #4b5563; line-height: 1.4;">Transaction ID: <span id="inv-transaction-id" style="font-weight: 600;"></span></p>
+                                <p style="font-size: 12px; color: #4b5563; line-height: 1.4;">Method: <span id="inv-payment-mode" style="font-weight: 600;"></span></p>
+                            </div>
+                        </div>
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 12px; background-color: #f8fafc;">
+                            <thead>
+                                <tr style="background-color: #e5e7eb; text-transform: uppercase; color: #111827; font-weight: 600;">
+                                    <th style="border: 1px solid #d1d5db; padding: 8px; text-align: left;">Medicine Name</th>
+                                    <th style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">Quantity</th>
+                                    <th style="border: 1px solid #d1d5db; padding: 8px; text-align: right;">Price</th>
+                                    <th style="border: 1px solid #d1d5db; padding: 8px; text-align: right;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inv-products" style="color: #4b5563;"></tbody>
+                        </table>
+                        <div style="text-align: right; margin-bottom: 16px; font-size: 12px; color: #4b5563; padding: 0 8px;">
+                            <p style="margin-bottom: 6px;">Subtotal: <span id="inv-subtotal" style="font-weight: 600;"></span></p>
+                            <p style="margin-bottom: 6px;">Tax: <span id="inv-tax" style="font-weight: 600;"></span></p>
+                            <p style="margin-bottom: 6px;">Shipping: <span id="inv-shipping" style="font-weight: 600;"></span></p>
+                            <p style="font-weight: 700; font-size: 14px; color: #111827;">Grand Total: <span id="inv-grand-total"></span></p>
+                        </div>
+                        <div style="text-align: center; padding-top: 12px; border-top: 2px solid #10b981; color: #4b5563; font-size: 12px;">
+                            <p style="margin-bottom: 6px;">Thank you for your business!</p>
+                            <p>PharmaCare Pharmacy | support@pharmacare.com | +91 9876543210</p>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 16px; display: flex; justify-content: center; gap: 8px;">
+                        <button onclick="setTimeout(() => window.print(), 100)" style="background-color: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; transition: background-color 0.2s, transform 0.1s;">Print</button>
+                        <button id="closeInvoice" style="background-color: #6b7280; color: white; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; transition: background-color 0.2s, transform 0.1s;">Close</button>
+                    </div>
+                    <style>
+                        .invoice-container button:hover {
+                            transform: scale(1.05);
+                        }
+                        @media print {
+                            body * {
+                                visibility: hidden;
+                            }
+                            #invoicePrint, #invoicePrint * {
+                                visibility: visible !important;
+                                color: #000 !important;
+                                background: #fff !important;
+                            }
+                            #invoicePrint {
+                                position: absolute;
+                                left: 0;
+                                top: 0;
+                                width: 100%;
+                                margin: 0;
+                                padding: 10px;
+                                box-shadow: none;
+                            }
+                        }
+                    </style>
+                </div>
+            </div>
+
+            <!-- Success Popup -->
+            <div id="successPopup" class="modal">
+                <div class="popup-container">
+                    <i class="fas fa-check-circle"></i>
+                    <p id="successMessage"></p>
+                    <button id="closeSuccessPopup">OK</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<script src="order.js"></script>
+ 
+</body>
+</html>
