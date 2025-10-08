@@ -364,20 +364,25 @@ $(document).ready(function() {
 
     if (excelFile) {
       formData.append('excelFile', excelFile);
-      for (let i = 0; i < images.length; i++) {
-        formData.append('images', images[i]);
-      }
+      Array.from(images).forEach(file => {
+        formData.append('productImages', file);
+      });
 
       // Show loader
       $('#bulkUploadOverlay').removeClass('hidden');
       $('#bulkUploadLoader').removeClass('hidden');
       $('#bulkUploadAcknowledgment').addClass('hidden');
 
-      fetch('http://localhost:8080/api/products/bulk-upload', {
+      fetch('http://localhost:8080/api/products/bulk-products-upload', {
         method: 'POST',
         body: formData
       })
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Bulk upload failed with status: ' + response.status);
+          }
+          return response.json();
+        })
         .then(data => {
           // Hide loader and show acknowledgment after 1.5s
           setTimeout(() => {
@@ -407,14 +412,22 @@ $(document).ready(function() {
           }, 1500);
         })
         .catch(error => {
-          console.error('Error:', error);
+          console.error('Error during bulk upload:', error);
           $('#bulkUploadLoader').addClass('hidden');
           $('#bulkUploadAcknowledgment').addClass('hidden');
           $('#bulkUploadOverlay').addClass('hidden');
-          alert('An error occurred during bulk upload.');
+          Toastify({
+            text: 'An error occurred during bulk upload: ' + error.message,
+            duration: 3000,
+            backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+          }).showToast();
         });
     } else {
-      alert('Please upload an Excel file.');
+      Toastify({
+        text: 'Please upload an Excel file.',
+        duration: 3000,
+        backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+      }).showToast();
     }
   });
 
