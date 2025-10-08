@@ -631,7 +631,7 @@ function showDeleteConfirm(id) {
 
 function deleteItem() {
   const id = $('#confirmDelete').data('deleteId');
-  fetch(`http://localhost:8080/api/products/delete-Product/${id}`, {
+  fetch(`http://localhost:8080/api/products/delete-product/${id}`, {
     method: 'DELETE'
   })
     .then(response => response.text())
