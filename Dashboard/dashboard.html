@@ -8,73 +8,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <style>
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f9fafb;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #60a5fa;
-      border-radius: 4px;
-    }
-    .sidebar-collapsed .nav-text {
-      display: none;
-    }
-    .sidebar-collapsed .nav-icon {
-      margin-right: 0;
-      text-align: center;
-      width: 100%;
-    }
-    .sidebar-collapsed nav a {
-      justify-content: center;
-    }
-    .stats-card {
-      animation: fadeIn 0.5s ease-in-out;
-    }
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(10px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-    /* Modal styles */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 50;
-    }
-    .modal-content {
-      background-color: white;
-      margin: 15% auto;
-      padding: 20px;
-      border-radius: 8px;
-      width: 300px;
-      text-align: center;
-    }
-    .close {
-      color: #888;
-      float: right;
-      font-size: 24px;
-      cursor: pointer;
-    }
-    .close:hover {
-      color: #555;
-    }
-  </style>
+ <link rel="stylesheet" href="dashboard.css">
 </head>
 <body class="bg-white h-screen flex overflow-hidden transition-colors duration-300">
-  <!-- Sidebar -->
   <aside id="sidebar" class="w-64 bg-blue-600 text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static md:translate-x-0 -translate-x-full">
     <div class="p-4 border-b border-blue-500 sticky top-0 bg-blue-600 z-10 flex justify-between items-center">
       <button id="toggle-sidebar-logo" class="flex items-center">
-        <img src="Images/logo.png" alt="PharmaCare Logo" class="w-8 h-8 mr-2" id="sidebar-logo">
+        <img src="../Images/logo.png" alt="PharmaCare Logo" class="w-8 h-8 mr-2" id="sidebar-logo">
         <span id="sidebar-title" class="text-2xl font-bold">GoodNews</span>
         <i id="sidebar-arrow" class="fas fa-chevron-right ml-2 transition-transform duration-300"></i>
       </button>
@@ -95,9 +35,7 @@
     </nav>
   </aside>
 
-  <!-- Main Content -->
   <div class="flex-1 flex flex-col overflow-hidden">
-    <!-- Header -->
     <header class="bg-white shadow sticky top-0 z-10">
       <div class="flex justify-between items-center p-4">
         <div class="flex items-center">
@@ -105,14 +43,6 @@
           <h1 class="text-xl font-semibold text-gray-800">Dashboard</h1>
         </div>
         <div class="flex items-center">
-          <div class="relative mr-4">
-            <input type="text" placeholder="Search..." class="border rounded-full py-2 px-4 w-64 bg-white border-grey-400" />
-            <i class="fas fa-search absolute right-3 top-3 text-blue-500"></i>
-          </div>
-          <div class="relative mr-4">
-            <i class="fas fa-bell text-gray-600 text-xl"></i>
-            <span class="absolute -top-1 -right-1 bg-red-500 text-red-100 rounded-full text-xs w-5 h-5 flex items-center justify-center">3</span>
-          </div>
           <div class="flex items-center">
             <div id="user-initials" class="w-10 h-10 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-lg font-semibold"></div>
             <div class="ml-2">
@@ -124,7 +54,6 @@
       </div>
     </header>
 
-    <!-- Logout Modal -->
     <div id="logoutModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
@@ -137,27 +66,17 @@
       </div>
     </div>
 
-    <!-- Dashboard Content -->
     <main class="flex-1 overflow-y-auto p-4 bg-white">
-      <!-- Date Filter -->
-      <div class="mb-6 flex justify-end">
-        <div class="relative">
-          <input id="date-range" type="text" placeholder="Select date range" class="border rounded py-2 px-4 w-64 bg-white border-blue-200" />
-          <i class="fas fa-calendar absolute right-3 top-3 text-blue-300"></i>
-        </div>
-      </div>
-
-      <!-- Stats Overview -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border shadow-xl p-4 hover:scale-105 transition-transform duration-300 stats-card">
           <div class="flex justify-between items-center">
             <div>
               <p class="text-gray-500">Total Revenue</p>
-              <h2 class="text-2xl font-bold text-gray-800">$12,845</h2>
+              <h2 class="text-2xl font-bold text-gray-800">₹12,845</h2>
               <p class="text-green-600 text-sm"><i class="fas fa-arrow-up"></i> 12% from last month</p>
             </div>
             <div class="bg-blue-50 p-3 rounded-full">
-              <i class="fas fa-dollar-sign text-cyan-500 text-xl"></i>
+              <i class="fas fa-rupee-sign text-cyan-500 text-xl"></i>
             </div>
           </div>
         </div>
@@ -199,26 +118,38 @@
         </div>
       </div>
 
-      <!-- Charts -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div class="bg-white rounded-lg shadow border p-4">
-          <h2 class="text-lg font-semibold mb-4 text-gray-800">Revenue Overview</h2>
-          <canvas id="revenueChart" height="250"></canvas>
+        <div class="bg-white rounded-lg shadow border p-4 chart-card">
+          <h2 class="text-lg font-semibold mb-4 text-gray-800">Monthly Revenue Overview</h2>
+          <div class="chart-container">
+            <canvas id="revenueChart"></canvas>
+          </div>
         </div>
-        <div class="bg-white rounded-lg shadow border p-4">
-          <h2 class="text-lg font-semibold mb-4 text-gray-800">Medication Categories</h2>
-          <canvas id="categoriesChart" height="200"></canvas>
+        <div class="bg-white rounded-lg shadow border p-4 chart-card">
+          <h2 class="text-lg font-semibold mb-4 text-gray-800">Medication Category Distribution</h2>
+          <div class="chart-container">
+            <canvas id="categoriesChart"></canvas>
+          </div>
         </div>
       </div>
 
-      <!-- Tables -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="bg-white rounded-lg border shadow p-4">
           <div class="flex justify-between items-center mb-4">
             <h2 class="text-lg font-semibold text-gray-800">Recent Prescriptions</h2>
             <div class="flex items-center">
-              <input id="prescriptions-search" type="text" placeholder="Filter..." class="border rounded py-1 px-2 mr-2 bg-white border-blue-200" />
-              <button id="export-prescriptions" class="bg-blue-400 text-white py-1 px-3 rounded">Export CSV</button>
+              <select id="prescriptions-status-filter" class="border rounded py-1 px-2 mr-2 bg-white border-blue-200">
+                <option value="">All Statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+              <select id="prescriptions-time-filter" class="border rounded py-1 px-2 bg-white border-blue-200">
+                <option value="all">All Time</option>
+                <option value="day">Day</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+              </select>
             </div>
           </div>
           <div class="overflow-x-auto">
@@ -239,8 +170,12 @@
           <div class="flex justify-between items-center mb-4">
             <h2 class="text-lg font-semibold text-gray-800">Low Stock Alert</h2>
             <div class="flex items-center">
-              <input id="lowstock-search" type="text" placeholder="Filter..." class="border rounded py-1 px-2 mr-2 bg-white border-blue-200" />
-              <button id="export-lowstock" class="bg-blue-400 text-white py-1 px-3 rounded">Export CSV</button>
+              <input id="lowstock-search" type="text" placeholder="Search product..." class="border rounded py-1 px-2 mr-2 bg-white border-blue-200" />
+              <select id="lowstock-filter" class="border rounded py-1 px-2 bg-white border-blue-200">
+                <option value="">All</option>
+                <option value="low">Low Stock</option>
+                <option value="finished">Finished Stock</option>
+              </select>
             </div>
           </div>
           <div class="overflow-x-auto">
@@ -259,18 +194,31 @@
         </div>
       </div>
 
-      <!-- Medicine Expiry Tracker and Top Selling Medications -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div class="bg-white rounded-lg border shadow p-4">
-          <h2 class="text-lg font-semibold mb-4 text-gray-800">Medicine Expiry Tracker</h2>
-          <canvas id="expiryChart"></canvas>
+        <div class="bg-white rounded-lg border shadow p-4 chart-card">
+          <h2 class="text-lg font-semibold mb-4 text-gray-800">Medication Expiry Tracker</h2>
+          <div class="chart-container">
+            <canvas id="expiryChart"></canvas>
+          </div>
+          <div class="overflow-x-auto mt-4">
+            <table class="min-w-full" id="expiry-table">
+              <thead>
+                <tr class="text-left text-gray-500 text-sm border-b border-gray-200">
+                  <th class="pb-2 cursor-pointer" data-sort="medication">Medication <i class="fas fa-sort"></i></th>
+                  <th class="pb-2 cursor-pointer" data-sort="expiryDate">Expiry Date <i class="fas fa-sort"></i></th>
+                  <th class="pb-2">Expiry Period</th>
+                </tr>
+              </thead>
+              <tbody id="expiryTable" class="text-gray-800"></tbody>
+            </table>
+          </div>
         </div>
         <div class="bg-white rounded-lg border shadow p-4">
           <div class="flex justify-between items-center mb-4">
             <h2 class="text-lg font-semibold text-gray-800">Top Selling Medications</h2>
             <div class="flex items-center">
-              <input id="topselling-search" type="text" placeholder="Filter..." class="border rounded py-1 px-2 mr-2 bg-white border-blue-200" />
-              <button id="export-topselling" class="bg-blue-400 text-white py-1 px-3 rounded">Export CSV</button>
+              <input id="topselling-search" type="text" placeholder="Search product..." class="border rounded py-1 px-2 mr-2 bg-white border-blue-200" />
+              <button id="export-topselling" class="bg-blue-400 text-white py-1 px-3 rounded">Export to Excel</button>
             </div>
           </div>
           <div class="overflow-x-auto">
