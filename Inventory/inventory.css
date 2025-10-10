@@ -119,3 +119,27 @@
     right: 0;
   }
 }
+
+
+/* Ensure modal content is relative for absolute children */
+  #bulkUploadModal .modal-content {
+    position: relative;
+  }
+
+  /* Overlay and layering fixes */
+  #bulkUploadOverlay {
+    z-index: 50; /* Base overlay */
+  }
+
+  #bulkUploadLoader {
+    z-index: 60; /* Above overlay */
+  }
+
+  #bulkUploadAcknowledgment {
+    z-index: 70; /* Above loader */
+  }
+
+  /* Skipped reasons text color (mustard yellow) */
+  #bulkSkippedReasonsList li {
+    color: #d97706 !important;
+  }

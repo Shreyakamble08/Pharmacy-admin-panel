@@ -731,8 +731,8 @@
         </div>
 
         <!-- Bulk Upload Modal -->
-        <div id="bulkUploadModal" class="modal">
-  <div class="modal-content max-w-md bg-white rounded-lg shadow-lg">
+    <div id="bulkUploadModal" class="modal">
+  <div class="modal-content max-w-md bg-white rounded-lg shadow-lg relative"> <!-- Added 'relative' for overlay positioning -->
     <span class="close" id="closeBulkUpload">&times;</span>
     <h2 class="text-xl font-semibold text-gray-800 mb-6">Bulk Upload Products</h2>
     <form id="bulkUploadForm" class="space-y-4">
@@ -774,16 +774,18 @@
       </div>
     </form>
     <!-- Acknowledgment Overlay -->
-    <div id="bulkUploadOverlay" class="hidden absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <!-- Loader -->
-      <div id="bulkUploadLoader" class="text-center">
-        <div class="inline-block">
-          <div class="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-          <p class="mt-4 text-white">Processing...</p>
+    <div id="bulkUploadOverlay" class="hidden absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <!-- Loader (full overlay during processing) -->
+      <div id="bulkUploadLoader" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-60 hidden">
+        <div class="text-center bg-white p-4 rounded-lg shadow-lg">
+          <div class="inline-block">
+            <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <p class="mt-2 text-gray-800 font-medium">Processing...</p>
+          </div>
         </div>
       </div>
-      <!-- Acknowledgment Card -->
-      <div id="bulkUploadAcknowledgment" class="hidden bg-white rounded-lg shadow-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <!-- Acknowledgment Card (centered above loader) -->
+      <div id="bulkUploadAcknowledgment" class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto z-70 hidden">
         <div class="border-b pb-4 mb-4">
           <h2 class="text-xl font-semibold text-gray-800">Upload Summary</h2>
         </div>

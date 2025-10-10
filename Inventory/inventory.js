@@ -445,30 +445,30 @@ $(document).ready(function() {
     fetch('http://localhost:8080/api/products/get-all-products')
       .then(response => response.json())
       .then(data => {
-        const products = data.content;
+        const products = data.content || [];
         const wsData = [
           ['Sr. No.', 'Product Name', 'Category', 'Sub Category', 'Brand', 'Batch No.', 'Quantity', 'Cost Price', 'Selling Price', 'Expiry Date', 'Supplier Name', 'Prescription', 'Description', 'Images'],
           ...products.map((item, index) => [
             index + 1,
-            item.productName,
-            item.productCategory,
-            item.productSubCategory,
-            item.brandName,
-            item.batchNo,
-            item.productQuantity,
-            item.productOldPrice,
-            item.productPrice,
-            item.expDate,
-            item.brandName,
+            item.productName || '',
+            item.productCategory || '',
+            item.productSubCategory || '',
+            item.brandName || '',
+            item.batchNo || '',
+            item.productQuantity || 0,
+            item.productOldPrice || 0,
+            item.productPrice || 0,
+            item.expDate || '',
+            item.brandName || '',
             item.prescriptionRequired ? 'Yes' : 'No',
-            item.productDescription,
-            [item.productMainImage, ...item.productSubImages].filter(img => img).join(';')
+            item.productDescription || '',
+            [item.productMainImage, ...(item.productSubImages || [])].filter(img => img).join(';')
           ])
         ];
         const ws = XLSX.utils.aoa_to_sheet(wsData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
-        XLSX.write(wb, 'inventory_export.xlsx');
+        XLSX.writeFile(wb, 'inventory_export.xlsx');
       })
       .catch(error => console.error('Error exporting Excel:', error));
   });
@@ -483,7 +483,7 @@ function fetchProducts(page = 0, size = 10) {
   fetch(`http://localhost:8080/api/products/get-all-products?page=${page}&size=${size}`)
     .then(response => response.json())
     .then(data => {
-      inventory = data.content;
+      inventory = data.content || [];
       $('#inventoryTable').DataTable().clear().rows.add(inventory).draw();
       updateOverviewCards(inventory);
     })
@@ -506,26 +506,35 @@ let currentImageIndex = 0;
 
 function showViewModal(id) {
   fetch(`http://localhost:8080/api/products/get-product/${id}`)
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch product details');
+      }
+      return response.json();
+    })
     .then(item => {
+      if (!item) {
+        alert('Product not found');
+        return;
+      }
       const detailsHtml = `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div><strong>Product Name:</strong> ${item.productName}</div>
-          <div><strong>Category:</strong> ${item.productCategory}</div>
-          <div><strong>Sub Category:</strong> ${item.productSubCategory}</div>
-          <div><strong>Brand:</strong> ${item.brandName}</div>
-          <div><strong>Batch Number:</strong> ${item.batchNo}</div>
-          <div><strong>Quantity:</strong> ${item.productQuantity}</div>
-          <div><strong>Cost Price:</strong> $${item.productOldPrice.toFixed(2)}</div>
-          <div><strong>Selling Price:</strong> $${item.productPrice.toFixed(2)}</div>
-          <div><strong>Expiry Date:</strong> ${item.expDate}</div>
+          <div><strong>Product Name:</strong> ${item.productName || 'N/A'}</div>
+          <div><strong>Category:</strong> ${item.productCategory || 'N/A'}</div>
+          <div><strong>Sub Category:</strong> ${item.productSubCategory || 'N/A'}</div>
+          <div><strong>Brand:</strong> ${item.brandName || 'N/A'}</div>
+          <div><strong>Batch Number:</strong> ${item.batchNo || 'N/A'}</div>
+          <div><strong>Quantity:</strong> ${item.productQuantity || 0}</div>
+          <div><strong>Cost Price:</strong> $${(item.productOldPrice || 0).toFixed(2)}</div>
+          <div><strong>Selling Price:</strong> $${(item.productPrice || 0).toFixed(2)}</div>
+          <div><strong>Expiry Date:</strong> ${item.expDate || 'N/A'}</div>
           <div><strong>Prescription Required:</strong> ${item.prescriptionRequired ? 'Yes' : 'No'}</div>
-          <div class="md:col-span-2"><strong>Description:</strong> ${item.productDescription}</div>
-          <div class="md:col-span-2"><strong>Benefits:</strong> ${item.benefitsList.join(', ') || 'None'}</div>
-          <div class="md:col-span-2"><strong>Directions:</strong> ${item.directionsList.join(', ') || 'None'}</div>
-          <div class="md:col-span-2"><strong>Sizes:</strong> ${item.productSizes.join(', ') || 'None'}</div>
+          <div class="md:col-span-2"><strong>Description:</strong> ${item.productDescription || 'None'}</div>
+          <div class="md:col-span-2"><strong>Benefits:</strong> ${(item.benefitsList || []).join(', ') || 'None'}</div>
+          <div class="md:col-span-2"><strong>Directions:</strong> ${(item.directionsList || []).join(', ') || 'None'}</div>
+          <div class="md:col-span-2"><strong>Sizes:</strong> ${(item.productSizes || []).join(', ') || 'None'}</div>
           <div class="md:col-span-2"><strong>Custom Fields:</strong> ${
-            Object.entries(item.productDynamicFields)
+            Object.entries(item.productDynamicFields || {})
               .map(([key, value]) => `${key}: ${value}`)
               .join(', ') || 'None'
           }</div>
@@ -540,13 +549,11 @@ function showViewModal(id) {
       gallery.empty();
       currentImageIndex = 0;
 
-      const images = [item.productMainImage, ...item.productSubImages].filter(img => img);
+      const images = [item.productMainImage, ...(item.productSubImages || [])].filter(img => img && typeof img === 'string' && img.trim() !== '');
       if (images.length > 0) {
         mainImage.attr('src', images[0]).removeClass('hidden');
         images.forEach((imgSrc, index) => {
-          if (imgSrc) {
-            gallery.append(`<img src="${imgSrc}" alt="Product Image ${index + 1}" class="image-gallery-img ${index === 0 ? 'active' : ''}" onclick="updateMainImage('${imgSrc}', ${index})"/>`);
-          }
+          gallery.append(`<img src="${imgSrc}" alt="Product Image ${index + 1}" class="image-gallery-img ${index === 0 ? 'active' : ''}" onclick="updateMainImage('${imgSrc}', ${index})"/>`);
         });
         navLeft.toggleClass('hidden', images.length <= 1);
         navRight.toggleClass('hidden', images.length <= 1);
@@ -573,7 +580,10 @@ function showViewModal(id) {
 
       $('#detailsModal').show();
     })
-    .catch(error => console.error('Error fetching product details:', error));
+    .catch(error => {
+      console.error('Error fetching product details:', error);
+      alert('Failed to load product details: ' + error.message);
+    });
 }
 
 function updateMainImage(src, index) {
@@ -601,13 +611,13 @@ function showEditModal(id) {
       $('#mfgDate').val(item.mfgDate);
       $('#expDate').val(item.expDate);
       $('#batchNumber').val(item.batchNo);
-      $('#benefits').val(item.benefitsList.join('\n'));
-      $('#directions').val(item.directionsList.join('\n'));
-      $('#productSizes').val(item.productSizes.join('\n'));
+      $('#benefits').val((item.benefitsList || []).join('\n'));
+      $('#directions').val((item.directionsList || []).join('\n'));
+      $('#productSizes').val((item.productSizes || []).join('\n'));
 
       $('#mainImagePreview').attr('src', item.productMainImage || '').toggleClass('hidden', !item.productMainImage);
       $('#subImagesPreview').empty();
-      item.productSubImages.forEach((imgSrc, index) => {
+      (item.productSubImages || []).forEach((imgSrc, index) => {
         if (imgSrc) {
           $('#subImagesPreview').append(
             `<img src="${imgSrc}" alt="Sub Image Preview ${index + 1}" class="image-preview w-24 h-24 object-cover rounded" />`
@@ -617,7 +627,7 @@ function showEditModal(id) {
 
       $('#custom-fields').removeClass('hidden');
       $('#custom-fields-container').empty();
-      Object.entries(item.productDynamicFields).forEach(([key, value]) => {
+      Object.entries(item.productDynamicFields || {}).forEach(([key, value]) => {
         const fieldId = `custom-field-${Date.now()}-${key}`;
         $('#custom-fields-container').append(`
           <div id="${fieldId}" class="flex gap-2 items-center">
