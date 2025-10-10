@@ -1,4 +1,5 @@
-  // User profile
+
+        // User profile
         const user = {
             name: "Shreya Kamble",
             role: "Admin",
@@ -18,69 +19,68 @@
         }
 
         displayUserProfile();
-  
-    
+
         // Updated dummy data with Indian context
         const customers = [
             {
-                id: "CUST-001", firstName: "Amit", lastName: "Sharma", email: "amit.sharma@example.com", phone: "+91 9876543210", city: "Mumbai", state: "MH", country: "India", addressType: "Home", dob: "1990-05-15", street: "123 Marine Drive", zip: "400001", status: "Active", regDate: "2023-01-15", lastLogin: "2023-10-20 14:32", orders: 24, spent: "₹1,84,500", active: true
+                id: "CUST-001", firstName: "Amit", lastName: "Sharma", email: "amit.sharma@example.com", phone: "+91 9876543210", city: "Mumbai", state: "MH", addressType: "Home", dob: "1990-05-15", street: "123 Marine Drive", zip: "400001", status: "Active", regDate: "2023-01-15", lastLogin: "2023-10-20 14:32", orders: 24, spent: "₹1,84,500", active: true
             },
             {
-                id: "CUST-002", firstName: "Priya", lastName: "Patel", email: "priya.patel@example.com", phone: "+91 8765432109", city: "Delhi", state: "DL", country: "India", addressType: "Work", dob: "1985-08-22", street: "456 Connaught Place", zip: "110001", status: "Active", regDate: "2022-11-08", lastLogin: "2023-10-21 09:15", orders: 42, spent: "₹3,21,050", active: true
+                id: "CUST-002", firstName: "Priya", lastName: "Patel", email: "priya.patel@example.com", phone: "+91 8765432109", city: "Delhi", state: "DL", addressType: "Work", dob: "1985-08-22", street: "456 Connaught Place", zip: "110001", status: "Active", regDate: "2022-11-08", lastLogin: "2023-10-21 09:15", orders: 42, spent: "₹3,21,050", active: true
             },
             {
-                id: "CUST-003", firstName: "Rahul", lastName: "Verma", email: "rahul.v@example.com", phone: "+91 7654321098", city: "Bengaluru", state: "KA", country: "India", addressType: "Home", dob: "1978-12-03", street: "789 MG Road", zip: "560001", status: "Active", regDate: "2023-03-27", lastLogin: "2023-10-19 16:45", orders: 15, spent: "₹97,525", active: true
+                id: "CUST-003", firstName: "Rahul", lastName: "Verma", email: "rahul.v@example.com", phone: "+91 7654321098", city: "Bengaluru", state: "KA", addressType: "Home", dob: "1978-12-03", street: "789 MG Road", zip: "560001", status: "Active", regDate: "2023-03-27", lastLogin: "2023-10-19 16:45", orders: 15, spent: "₹97,525", active: true
             },
             {
-                id: "CUST-004", firstName: "Sneha", lastName: "Gupta", email: "sneha.g@example.com", phone: "+91 6543210987", city: "Kolkata", state: "WB", country: "India", addressType: "Other", dob: "1992-07-14", street: "321 Park Street", zip: "700016", status: "Deactivated", regDate: "2023-05-10", lastLogin: "2023-10-18 11:20", orders: 31, spent: "₹2,15,075", active: false
+                id: "CUST-004", firstName: "Sneha", lastName: "Gupta", email: "sneha.g@example.com", phone: "+91 6543210987", city: "Kolkata", state: "WB", addressType: "Other", dob: "1992-07-14", street: "321 Park Street", zip: "700016", status: "Deactivated", regDate: "2023-05-10", lastLogin: "2023-10-18 11:20", orders: 31, spent: "₹2,15,075", active: false
             },
             {
-                id: "CUST-005", firstName: "Vikram", lastName: "Singh", email: "vikram.s@example.com", phone: "+91 5432109876", city: "Chennai", state: "TN", country: "India", addressType: "Work", dob: "1982-03-30", street: "654 Anna Salai", zip: "600002", status: "Active", regDate: "2022-09-12", lastLogin: "2023-10-21 13:40", orders: 56, spent: "₹4,32,000", active: true
+                id: "CUST-005", firstName: "Vikram", lastName: "Singh", email: "vikram.s@example.com", phone: "+91 5432109876", city: "Chennai", state: "TN", addressType: "Work", dob: "1982-03-30", street: "654 Anna Salai", zip: "600002", status: "Active", regDate: "2022-09-12", lastLogin: "2023-10-21 13:40", orders: 56, spent: "₹4,32,000", active: true
             },
             {
-                id: "CUST-006", firstName: "Anjali", lastName: "Mehta", email: "anjali.m@example.com", phone: "+91 4321098765", city: "Hyderabad", state: "TS", country: "India", addressType: "Home", dob: "1988-11-25", street: "987 Banjara Hills", zip: "500034", status: "Active", regDate: "2023-02-14", lastLogin: "2023-10-22 10:30", orders: 19, spent: "₹1,20,000", active: true
+                id: "CUST-006", firstName: "Anjali", lastName: "Mehta", email: "anjali.m@example.com", phone: "+91 4321098765", city: "Hyderabad", state: "TS", addressType: "Home", dob: "1988-11-25", street: "987 Banjara Hills", zip: "500034", status: "Active", regDate: "2023-02-14", lastLogin: "2023-10-22 10:30", orders: 19, spent: "₹1,20,000", active: true
             },
             {
-                id: "CUST-007", firstName: "Rohit", lastName: "Kumar", email: "rohit.k@example.com", phone: "+91 3210987654", city: "Pune", state: "MH", country: "India", addressType: "Work", dob: "1975-06-10", street: "147 Koregaon Park", zip: "411001", status: "Active", regDate: "2023-04-01", lastLogin: "2023-10-20 15:50", orders: 27, spent: "₹1,89,050", active: true
+                id: "CUST-007", firstName: "Rohit", lastName: "Kumar", email: "rohit.k@example.com", phone: "+91 3210987654", city: "Pune", state: "MH", addressType: "Work", dob: "1975-06-10", street: "147 Koregaon Park", zip: "411001", status: "Active", regDate: "2023-04-01", lastLogin: "2023-10-20 15:50", orders: 27, spent: "₹1,89,050", active: true
             },
             {
-                id: "CUST-008", firstName: "Pooja", lastName: "Nair", email: "pooja.n@example.com", phone: "+91 2109876543", city: "Mumbai", state: "MH", country: "India", addressType: "Home", dob: "1993-09-08", street: "258 Juhu Tara Road", zip: "400049", status: "Deactivated", regDate: "2023-06-20", lastLogin: "2023-10-17 08:45", orders: 12, spent: "₹75,025", active: false
+                id: "CUST-008", firstName: "Pooja", lastName: "Nair", email: "pooja.n@example.com", phone: "+91 2109876543", city: "Mumbai", state: "MH", addressType: "Home", dob: "1993-09-08", street: "258 Juhu Tara Road", zip: "400049", status: "Deactivated", regDate: "2023-06-20", lastLogin: "2023-10-17 08:45", orders: 12, spent: "₹75,025", active: false
             },
             {
-                id: "CUST-009", firstName: "Arjun", lastName: "Reddy", email: "arjun.r@example.com", phone: "+91 1098765432", city: "Hyderabad", state: "TS", country: "India", addressType: "Other", dob: "1980-01-22", street: "369 Gachibowli", zip: "500032", status: "Active", regDate: "2023-07-15", lastLogin: "2023-10-21 12:10", orders: 45, spent: "₹3,50,075", active: true
+                id: "CUST-009", firstName: "Arjun", lastName: "Reddy", email: "arjun.r@example.com", phone: "+91 1098765432", city: "Hyderabad", state: "TS", addressType: "Other", dob: "1980-01-22", street: "369 Gachibowli", zip: "500032", status: "Active", regDate: "2023-07-15", lastLogin: "2023-10-21 12:10", orders: 45, spent: "₹3,50,075", active: true
             },
             {
-                id: "CUST-010", firstName: "Neha", lastName: "Joshi", email: "neha.j@example.com", phone: "+91 9988776655", city: "Delhi", state: "DL", country: "India", addressType: "Home", dob: "1995-04-17", street: "741 Karol Bagh", zip: "110005", status: "Active", regDate: "2023-08-05", lastLogin: "2023-10-22 14:20", orders: 33, spent: "₹2,45,000", active: true
+                id: "CUST-010", firstName: "Neha", lastName: "Joshi", email: "neha.j@example.com", phone: "+91 9988776655", city: "Delhi", state: "DL", addressType: "Home", dob: "1995-04-17", street: "741 Karol Bagh", zip: "110005", status: "Active", regDate: "2023-08-05", lastLogin: "2023-10-22 14:20", orders: 33, spent: "₹2,45,000", active: true
             },
             {
-                id: "CUST-011", firstName: "Suresh", lastName: "Rao", email: "suresh.r@example.com", phone: "+91 8877665544", city: "Bengaluru", state: "KA", country: "India", addressType: "Work", dob: "1987-02-09", street: "852 Indiranagar", zip: "560038", status: "Active", regDate: "2023-09-10", lastLogin: "2023-10-23 09:30", orders: 18, spent: "₹1,10,000", active: true
+                id: "CUST-011", firstName: "Suresh", lastName: "Rao", email: "suresh.r@example.com", phone: "+91 8877665544", city: "Bengaluru", state: "KA", addressType: "Work", dob: "1987-02-09", street: "852 Indiranagar", zip: "560038", status: "Active", regDate: "2023-09-10", lastLogin: "2023-10-23 09:30", orders: 18, spent: "₹1,10,000", active: true
             },
             {
-                id: "CUST-012", firstName: "Kavita", lastName: "Desai", email: "kavita.d@example.com", phone: "+91 7766554433", city: "Pune", state: "MH", country: "India", addressType: "Home", dob: "1991-12-05", street: "963 Aundh", zip: "411007", status: "Deactivated", regDate: "2023-10-15", lastLogin: "2023-10-24 11:45", orders: 22, spent: "₹1,50,050", active: false
+                id: "CUST-012", firstName: "Kavita", lastName: "Desai", email: "kavita.d@example.com", phone: "+91 7766554433", city: "Pune", state: "MH", addressType: "Home", dob: "1991-12-05", street: "963 Aundh", zip: "411007", status: "Deactivated", regDate: "2023-10-15", lastLogin: "2023-10-24 11:45", orders: 22, spent: "₹1,50,050", active: false
             },
             {
-                id: "CUST-013", firstName: "Vivek", lastName: "Iyer", email: "vivek.i@example.com", phone: "+91 6655443322", city: "Chennai", state: "TN", country: "India", addressType: "Other", dob: "1983-07-18", street: "159 T Nagar", zip: "600017", status: "Active", regDate: "2023-11-20", lastLogin: "2023-10-25 13:20", orders: 40, spent: "₹3,00,075", active: true
+                id: "CUST-013", firstName: "Vivek", lastName: "Iyer", email: "vivek.i@example.com", phone: "+91 6655443322", city: "Chennai", state: "TN", addressType: "Other", dob: "1983-07-18", street: "159 T Nagar", zip: "600017", status: "Active", regDate: "2023-11-20", lastLogin: "2023-10-25 13:20", orders: 40, spent: "₹3,00,075", active: true
             },
             {
-                id: "CUST-014", firstName: "Meena", lastName: "Kapoor", email: "meena.k@example.com", phone: "+91 5544332211", city: "Kolkata", state: "WB", country: "India", addressType: "Work", dob: "1979-10-30", street: "753 Salt Lake", zip: "700091", status: "Active", regDate: "2023-12-01", lastLogin: "2023-10-26 15:10", orders: 28, spent: "₹2,00,000", active: true
+                id: "CUST-014", firstName: "Meena", lastName: "Kapoor", email: "meena.k@example.com", phone: "+91 5544332211", city: "Kolkata", state: "WB", addressType: "Work", dob: "1979-10-30", street: "753 Salt Lake", zip: "700091", status: "Active", regDate: "2023-12-01", lastLogin: "2023-10-26 15:10", orders: 28, spent: "₹2,00,000", active: true
             },
             {
-                id: "CUST-015", firstName: "Rajesh", lastName: "Malhotra", email: "rajesh.m@example.com", phone: "+91 4433221100", city: "Mumbai", state: "MH", country: "India", addressType: "Home", dob: "1994-03-12", street: "246 Bandra West", zip: "400050", status: "Active", regDate: "2024-01-05", lastLogin: "2023-10-27 16:50", orders: 35, spent: "₹2,60,025", active: true
+                id: "CUST-015", firstName: "Rajesh", lastName: "Malhotra", email: "rajesh.m@example.com", phone: "+91 4433221100", city: "Mumbai", state: "MH", addressType: "Home", dob: "1994-03-12", street: "246 Bandra West", zip: "400050", status: "Active", regDate: "2024-01-05", lastLogin: "2023-10-27 16:50", orders: 35, spent: "₹2,60,025", active: true
             },
             {
-                id: "CUST-016", firstName: "Sunita", lastName: "Chopra", email: "sunita.c@example.com", phone: "+91 3322110099", city: "Hyderabad", state: "TS", country: "India", addressType: "Other", dob: "1986-06-25", street: "864 Madhapur", zip: "500081", status: "Deactivated", regDate: "2024-02-10", lastLogin: "2023-10-28 18:30", orders: 14, spent: "₹90,050", active: false
+                id: "CUST-016", firstName: "Sunita", lastName: "Chopra", email: "sunita.c@example.com", phone: "+91 3322110099", city: "Hyderabad", state: "TS", addressType: "Other", dob: "1986-06-25", street: "864 Madhapur", zip: "500081", status: "Deactivated", regDate: "2024-02-10", lastLogin: "2023-10-28 18:30", orders: 14, spent: "₹90,050", active: false
             },
             {
-                id: "CUST-017", firstName: "Aditya", lastName: "Bose", email: "aditya.b@example.com", phone: "+91 2211009988", city: "Delhi", state: "DL", country: "India", addressType: "Work", dob: "1990-09-07", street: "975 Saket", zip: "110017", status: "Active", regDate: "2024-03-15", lastLogin: "2023-10-29 20:15", orders: 50, spent: "₹3,80,000", active: true
+                id: "CUST-017", firstName: "Aditya", lastName: "Bose", email: "aditya.b@example.com", phone: "+91 2211009988", city: "Delhi", state: "DL", addressType: "Work", dob: "1990-09-07", street: "975 Saket", zip: "110017", status: "Active", regDate: "2024-03-15", lastLogin: "2023-10-29 20:15", orders: 50, spent: "₹3,80,000", active: true
             },
             {
-                id: "CUST-018", firstName: "Lakshmi", lastName: "Menon", email: "lakshmi.m@example.com", phone: "+91 1100998877", city: "Chennai", state: "TN", country: "India", addressType: "Home", dob: "1984-04-19", street: "135 Adyar", zip: "600020", status: "Active", regDate: "2024-04-20", lastLogin: "2023-10-30 22:00", orders: 26, spent: "₹1,90,075", active: true
+                id: "CUST-018", firstName: "Lakshmi", lastName: "Menon", email: "lakshmi.m@example.com", phone: "+91 1100998877", city: "Chennai", state: "TN", addressType: "Home", dob: "1984-04-19", street: "135 Adyar", zip: "600020", status: "Active", regDate: "2024-04-20", lastLogin: "2023-10-30 22:00", orders: 26, spent: "₹1,90,075", active: true
             },
             {
-                id: "CUST-019", firstName: "Nikhil", lastName: "Jain", email: "nikhil.j@example.com", phone: "+91 9988776655", city: "Pune", state: "MH", country: "India", addressType: "Other", dob: "1992-11-02", street: "246 Viman Nagar", zip: "411014", status: "Active", regDate: "2024-05-25", lastLogin: "2023-10-31 23:45", orders: 37, spent: "₹2,70,025", active: true
+                id: "CUST-019", firstName: "Nikhil", lastName: "Jain", email: "nikhil.j@example.com", phone: "+91 9988776655", city: "Pune", state: "MH", addressType: "Other", dob: "1992-11-02", street: "246 Viman Nagar", zip: "411014", status: "Active", regDate: "2024-05-25", lastLogin: "2023-10-31 23:45", orders: 37, spent: "₹2,70,025", active: true
             },
             {
-                id: "CUST-020", firstName: "Ritu", lastName: "Saxena", email: "ritu.s@example.com", phone: "+91 8877665544", city: "Bengaluru", state: "KA", country: "India", addressType: "Work", dob: "1977-08-14", street: "357 Whitefield", zip: "560066", status: "Deactivated", regDate: "2024-06-30", lastLogin: "2023-11-01 01:30", orders: 16, spent: "₹1,00,000", active: false
+                id: "CUST-020", firstName: "Ritu", lastName: "Saxena", email: "ritu.s@example.com", phone: "+91 8877665544", city: "Bengaluru", state: "KA", addressType: "Work", dob: "1977-08-14", street: "357 Whitefield", zip: "560066", status: "Deactivated", regDate: "2024-06-30", lastLogin: "2023-11-01 01:30", orders: 16, spent: "₹1,00,000", active: false
             }
         ];
 
@@ -110,7 +110,6 @@
                     { data: 'phone', className: 'text-left' },
                     { data: 'city', className: 'text-left' },
                     { data: 'state', className: 'text-left' },
-                    { data: 'country', className: 'text-left' },
                     { data: 'addressType', className: 'text-left' },
                     {
                         data: null,
@@ -127,18 +126,18 @@
             });
             populateTable(table);
             updateStats();
-            
+
             // Add event listeners to action buttons
             $(document).on('click', '.action-btn-view', function() {
                 const customerId = $(this).data('id');
                 viewCustomer(customerId);
             });
-            
+
             $(document).on('click', '.action-btn-edit', function() {
                 const customerId = $(this).data('id');
                 editCustomer(customerId);
             });
-            
+
             $(document).on('click', '.action-btn-block', function() {
                 const customerId = $(this).data('id');
                 const customer = customers.find(c => c.id === customerId);
@@ -167,33 +166,25 @@
             table.clear().rows.add(customers).draw();
         }
 
-        // Filter and search
+        // Filter table
         function filterTable() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
             const city = document.getElementById('cityFilter').value.toLowerCase();
             const state = document.getElementById('stateFilter').value.toLowerCase();
-            const country = document.getElementById('countryFilter').value.toLowerCase();
             const addressType = document.getElementById('addressTypeFilter').value.toLowerCase();
 
             const table = $('#customerTable').DataTable();
             const filteredCustomers = customers.filter(customer => {
-                const matchesSearch = customer.firstName.toLowerCase().includes(search) || 
-                                    customer.lastName.toLowerCase().includes(search) || 
-                                    customer.phone.toLowerCase().includes(search);
                 const matchesFilters = (!city || customer.city.toLowerCase() === city) &&
-                                    (!state || customer.state.toLowerCase() === state) &&
-                                    (!country || customer.country.toLowerCase() === country) &&
-                                    (!addressType || customer.addressType.toLowerCase() === addressType);
-                return matchesSearch && matchesFilters;
+                                      (!state || customer.state.toLowerCase() === state) &&
+                                      (!addressType || customer.addressType.toLowerCase() === addressType);
+                return matchesFilters;
             });
             table.clear().rows.add(filteredCustomers).draw();
         }
 
-        // Event listeners for search and filters
-        document.getElementById('searchInput').addEventListener('input', filterTable);
+        // Event listeners for filters
         document.getElementById('cityFilter').addEventListener('change', filterTable);
         document.getElementById('stateFilter').addEventListener('change', filterTable);
-        document.getElementById('countryFilter').addEventListener('change', filterTable);
         document.getElementById('addressTypeFilter').addEventListener('change', filterTable);
 
         // View Customer
@@ -211,7 +202,6 @@
                 document.getElementById('profile-city').textContent = customer.city;
                 document.getElementById('profile-state').textContent = customer.state;
                 document.getElementById('profile-zip').textContent = customer.zip;
-                document.getElementById('profile-country').textContent = customer.country;
                 document.getElementById('profile-status').textContent = customer.status;
                 document.getElementById('profile-regdate').textContent = customer.regDate;
                 document.getElementById('profile-lastlogin').textContent = customer.lastLogin;
@@ -241,7 +231,6 @@
                 document.getElementById('edit-city').value = customer.city;
                 document.getElementById('edit-state').value = customer.state;
                 document.getElementById('edit-zip').value = customer.zip;
-                document.getElementById('edit-country').value = customer.country;
                 document.getElementById('editCustomerModal').style.display = 'flex';
             }
         }
@@ -267,7 +256,6 @@
                 customer.city = document.getElementById('edit-city').value;
                 customer.state = document.getElementById('edit-state').value;
                 customer.zip = document.getElementById('edit-zip').value;
-                customer.country = document.getElementById('edit-country').value;
                 document.getElementById('editCustomerModal').style.display = 'none';
                 const table = $('#customerTable').DataTable();
                 populateTable(table);
@@ -333,17 +321,17 @@
             document.getElementById('successPopup').style.display = 'none';
         });
 
-        // Export CSV
+        // Export Excel
         document.getElementById('exportBtn').addEventListener('click', () => {
-            let csv = 'Sr. No.,Customer ID,First Name,Last Name,Email,Phone,City,State,Country,Address Type,DOB,Street,ZIP,Status,Registration Date,Last Login,Total Orders,Total Spent\n';
+            let csv = 'Sr. No.,Customer ID,First Name,Last Name,Email,Phone,City,State,Address Type,DOB,Street,ZIP,Status,Registration Date,Last Login,Total Orders,Total Spent\n';
             customers.forEach((customer, index) => {
-                csv += `${index + 1},${customer.id},${customer.firstName},${customer.lastName},${customer.email},${customer.phone},${customer.city},${customer.state},${customer.country},${customer.addressType},${customer.dob},${customer.street},${customer.zip},${customer.status},${customer.regDate},${customer.lastLogin},${customer.orders},${customer.spent}\n`;
+                csv += `${index + 1},${customer.id},${customer.firstName},${customer.lastName},${customer.email},${customer.phone},${customer.city},${customer.state},${customer.addressType},${customer.dob},${customer.street},${customer.zip},${customer.status},${customer.regDate},${customer.lastLogin},${customer.orders},${customer.spent}\n`;
             });
-            const blob = new Blob([csv], { type: 'text/csv' });
+            const blob = new Blob([csv], { type: 'application/vnd.ms-excel' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'customers.csv';
+            a.download = 'customers.xlsx';
             a.click();
         });
 
@@ -372,6 +360,4 @@
                 el.classList.toggle('mx-auto');
             });
         });
-
-      
-      
+  
