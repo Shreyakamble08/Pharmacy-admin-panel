@@ -1,8 +1,10 @@
+// User profile data
 const user = {
   name: "Shreya Kamble",
   role: "Admin"
 };
 
+// Display user profile in the UI
 function displayUserProfile() {
   const userInitials = document.getElementById('user-initials');
   const userName = document.getElementById('user-name');
@@ -20,8 +22,13 @@ function displayUserProfile() {
 
 displayUserProfile();
 
+// Global variables for inventory and pagination
 let inventory = [];
+let totalPages = 1;
+let currentPage = 0;
+let pageSize = 10;
 
+// Debounce function to prevent rapid sidebar toggling
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {
@@ -34,6 +41,7 @@ function debounce(func, wait) {
   };
 }
 
+// Update sidebar arrow icon based on state
 function updateSidebarArrow(isHidden, isCollapsed, isMobileView) {
   const arrow = $('#sidebar-arrow');
   if (isMobileView) {
@@ -46,25 +54,24 @@ function updateSidebarArrow(isHidden, isCollapsed, isMobileView) {
 }
 
 $(document).ready(function() {
+  // Initialize DataTable with fixed search disabled and pagination support
   const table = $('#inventoryTable').DataTable({
     scrollX: true,
     fixedHeader: true,
     autoWidth: false,
-    searching: false, // Disable search functionality
+    searching: false, // Search disabled as per previous requirement
     columns: [
       { 
         data: null, 
-        render: (data, type, row, meta) => meta.row + 1,
+        // Fix: Use _iDisplayStart for correct row numbering across pages (Issue #3: Pagination)
+        render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1,
         className: "text-center"
       },
       { data: 'productName', className: "text-left" },
       { data: 'productCategory', className: "text-left" },
       { data: 'productSubCategory', className: "text-left" },
       { data: 'batchNo', className: "text-left" },
-      { 
-        data: 'productQuantity',
-        className: "text-center"
-      },
+      { data: 'productQuantity', className: "text-center" },
       { 
         data: 'reorderLevel', 
         defaultContent: "N/A",
@@ -81,10 +88,7 @@ $(document).ready(function() {
         className: "text-right"
       },
       { data: 'expDate', className: "text-left" },
-      { 
-        data: 'brandName', 
-        className: "text-left"
-      },
+      { data: 'brandName', className: "text-left" },
       { 
         data: 'storageLocation', 
         defaultContent: "N/A",
@@ -108,14 +112,15 @@ $(document).ready(function() {
       }
     ],
     createdRow: function(row, data, dataIndex) {
-      const quantity = parseInt(data.productQuantity);
+      // Fix: Handle invalid dates and quantities for stats (Issue #4: Inventory Stats)
+      const quantity = parseInt(data.productQuantity) || 0;
       const reorderLevel = parseInt(data.reorderLevel || 0);
       const expDate = new Date(data.expDate);
       const today = new Date('2025-10-08');
       const daysToExpiry = (expDate - today) / (1000 * 60 * 60 * 24);
       
       $(row).removeClass('alert-medium alert-low alert-expired');
-      if (daysToExpiry <= 30) {
+      if (isNaN(daysToExpiry) || daysToExpiry <= 30) {
         $(row).addClass('alert-expired');
       } else if (quantity <= reorderLevel * 0.5) {
         $(row).addClass('alert-low');
@@ -123,11 +128,9 @@ $(document).ready(function() {
         $(row).addClass('alert-medium');
       }
     },
-    pageLength: 10,
+    pageLength: pageSize,
     lengthMenu: [10, 25, 50, 100],
     language: {
-      search: "", // Not used since searching is disabled
-      searchPlaceholder: "", // Not used
       lengthMenu: "Show _MENU_ entries",
       info: "Showing _START_ to _END_ of _TOTAL_ entries",
       emptyTable: "No products available in the inventory.",
@@ -136,9 +139,10 @@ $(document).ready(function() {
         next: "<i class='fas fa-chevron-right'></i>"
       }
     },
-    dom: '<"flex justify-between items-center mb-4"l>rt<"flex justify-between items-center mt-4"ip>' // Removed 'f' to exclude search input
+    dom: '<"flex justify-between items-center mb-4"l>rt<"flex justify-between items-center mt-4"ip>'
   });
 
+  // Initial fetch of products
   fetchProducts();
 
   flatpickr(".flatpickr", {
@@ -191,6 +195,7 @@ $(document).ready(function() {
     $('#subImagesPreview').empty();
     $('#custom-fields').addClass('hidden');
     $('#custom-fields-container').empty();
+    $('#medicineForm').removeData('editId');
     $('#medicineModal').show();
   });
 
@@ -245,7 +250,6 @@ $(document).ready(function() {
     `);
     $('.delete-custom-field').off('click').on('click', function() {
       $(this).parent().remove();
-      updateOverviewCards(inventory);
     });
   });
 
@@ -261,24 +265,24 @@ $(document).ready(function() {
       }
     });
     const productData = {
-      productName: $('#name').val(),
-      productCategory: $('#category').val(),
-      productSubCategory: $('#subCategory').val(),
-      productPrice: parseFloat($('#sellingPrice').val()),
-      productOldPrice: parseFloat($('#costPrice').val()),
-      productStock: $('#productStock').val(),
-      productStatus: $('#productStatus').val(),
-      productDescription: $('#description').val(),
-      productQuantity: parseInt($('#quantity').val()),
+      productName: $('#name').val() || '',
+      productCategory: $('#category').val() || '',
+      productSubCategory: $('#subCategory').val() || '',
+      productPrice: parseFloat($('#sellingPrice').val()) || 0,
+      productOldPrice: parseFloat($('#costPrice').val()) || 0,
+      productStock: $('#productStock').val() || '',
+      productStatus: $('#productStatus').val() || '',
+      productDescription: $('#description').val() || '',
+      productQuantity: parseInt($('#quantity').val()) || 0,
       prescriptionRequired: $('#prescriptionRequired').val() === 'Yes',
-      brandName: $('#brand').val(),
-      mfgDate: $('#mfgDate').val(),
-      expDate: $('#expDate').val(),
-      batchNo: $('#batchNumber').val(),
-      benefitsList: $('#benefits').val().split('\n').filter(line => line.trim()),
-      directionsList: $('#directions').val().split('\n').filter(line => line.trim()),
+      brandName: $('#brand').val() || '',
+      mfgDate: $('#mfgDate').val() || '',
+      expDate: $('#expDate').val() || '',
+      batchNo: $('#batchNumber').val() || '',
+      benefitsList: $('#benefits').val().split('\n').filter(line => line.trim()) || [],
+      directionsList: $('#directions').val().split('\n').filter(line => line.trim()) || [],
       productDynamicFields: customFields,
-      productSizes: $('#productSizes').val().split('\n').filter(line => line.trim())
+      productSizes: $('#productSizes').val().split('\n').filter(line => line.trim()) || []
     };
 
     formData.append('productData', JSON.stringify(productData));
@@ -300,48 +304,70 @@ $(document).ready(function() {
       method: method,
       body: formData
     })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to ${editId ? 'update' : 'create'} product: ${response.status}`);
+        }
+        return response.json();
+      })
       .then(data => {
-        fetchProducts();
+        // Fix: Refresh products with current page and size, update stats (Issue #4: Inventory Stats)
+        fetchProducts(currentPage, pageSize);
         closeModal('medicineModal');
         Toastify({
-          text: editId ? 'Product updated successfully!!' : 'Product added successfully!!',
+          text: editId ? 'Product updated successfully!' : 'Product added successfully!',
           duration: 3000,
-          backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)'
+          style: { background: 'linear-gradient(to right, #00b09b, #96c93d)' }
         }).showToast();
         $('#medicineForm').removeData('editId');
       })
       .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while saving the product.');
+        console.error('Error saving product:', error);
+        Toastify({
+          text: `Error: ${error.message}`,
+          duration: 3000,
+          style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
+        }).showToast();
       });
   });
 
   $('#filter-category').change(function() {
+    // Fix: Reset to first page and support "All Categories" (Issue #2: Category Filter)
     const category = $(this).val();
-    if (category) {
-      fetch(`http://localhost:8080/api/products/get-by-category/${category}`)
+    currentPage = 0;
+    if (category && category !== 'all') {
+      fetch(`http://localhost:8080/api/products/get-by-category/${encodeURIComponent(category)}?page=${currentPage}&size=${pageSize}`)
         .then(response => {
           if (!response.ok) {
-            throw new Error('Failed to fetch products by category');
+            throw new Error(`Failed to fetch products for category ${category}: ${response.status}`);
           }
           return response.json();
         })
         .then(data => {
-          inventory = data;
-          table.clear().rows.add(data).draw();
-          updateOverviewCards(data);
+          inventory = data.content || [];
+          totalPages = data.totalPages || 1;
+          const table = $('#inventoryTable').DataTable();
+          table.clear().rows.add(inventory).draw();
+          // Fix: Update stats after filtering (Issue #4: Inventory Stats)
+          updateOverviewCards(inventory);
+          if (inventory.length === 0) {
+            Toastify({
+              text: `No products found for category: ${category}`,
+              duration: 3000,
+              style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
+            }).showToast();
+          }
         })
         .catch(error => {
           console.error('Error fetching products by category:', error);
           Toastify({
-            text: 'Failed to load products for category: ' + error.message,
+            text: `Failed to load products for category: ${error.message}`,
             duration: 3000,
-            backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+            style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
           }).showToast();
         });
     } else {
-      fetchProducts();
+      fetchProducts(currentPage, pageSize);
     }
   });
 
@@ -377,7 +403,7 @@ $(document).ready(function() {
       })
         .then(response => {
           if (!response.ok) {
-            throw new Error('Bulk upload failed with status: ' + response.status);
+            throw new Error(`Bulk upload failed: ${response.status}`);
           }
           return response.json();
         })
@@ -400,11 +426,12 @@ $(document).ready(function() {
             }
 
             $('#bulkUploadAcknowledgment').removeClass('hidden');
-            fetchProducts();
+            // Fix: Refresh products and stats after bulk upload (Issue #4: Inventory Stats)
+            fetchProducts(currentPage, pageSize);
             Toastify({
               text: `Successfully imported ${data.uploadedCount || 'multiple'} items`,
               duration: 3000,
-              backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)'
+              style: { background: 'linear-gradient(to right, #00b09b, #96c93d)' }
             }).showToast();
           }, 1500);
         })
@@ -414,16 +441,16 @@ $(document).ready(function() {
           $('#bulkUploadAcknowledgment').addClass('hidden');
           $('#bulkUploadOverlay').addClass('hidden');
           Toastify({
-            text: 'An error occurred during bulk upload: ' + error.message,
+            text: `Error during bulk upload: ${error.message}`,
             duration: 3000,
-            backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+            style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
           }).showToast();
         });
     } else {
       Toastify({
         text: 'Please upload an Excel file.',
         duration: 3000,
-        backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+        style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
       }).showToast();
     }
   });
@@ -434,13 +461,14 @@ $(document).ready(function() {
     $('#bulkUploadForm')[0].reset();
     $('#bulkSkippedReasonsContainer').addClass('hidden');
     $('#bulkSkippedReasonsList').empty();
+    closeModal('bulkUploadModal');
   };
 
   $('#export-csv').click(function() {
-    fetch('http://localhost:8080/api/products/get-all-products')
+    fetch(`http://localhost:8080/api/products/get-all-products?page=${currentPage}&size=${pageSize}`)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch products for export');
+          throw new Error(`Failed to fetch products for export: ${response.status}`);
         }
         return response.json();
       })
@@ -473,9 +501,9 @@ $(document).ready(function() {
       .catch(error => {
         console.error('Error exporting Excel:', error);
         Toastify({
-          text: 'Failed to export Excel: ' + error.message,
+          text: `Failed to export Excel: ${error.message}`,
           duration: 3000,
-          backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+          style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
         }).showToast();
       });
   });
@@ -485,63 +513,132 @@ $(document).ready(function() {
   });
 
   $('#inventoryTable_length select').on('change', function() {
-    const pageSize = parseInt($(this).val());
-    fetchProducts(0, pageSize);
+    // Fix: Update pageSize and reset to first page (Issue #3: Pagination)
+    pageSize = parseInt($(this).val());
+    currentPage = 0;
+    const category = $('#filter-category').val();
+    if (category && category !== 'all') {
+      fetch(`http://localhost:8080/api/products/get-by-category/${encodeURIComponent(category)}?page=${currentPage}&size=${pageSize}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch products for category ${category}: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          inventory = data.content || [];
+          totalPages = data.totalPages || 1;
+          const table = $('#inventoryTable').DataTable();
+          table.clear().rows.add(inventory).draw();
+          updateOverviewCards(inventory);
+        })
+        .catch(error => {
+          console.error('Error fetching paginated category products:', error);
+          Toastify({
+            text: `Failed to load page ${currentPage + 1}: ${error.message}`,
+            duration: 3000,
+            style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
+          }).showToast();
+        });
+    } else {
+      fetchProducts(currentPage, pageSize);
+    }
   });
 
   $('#inventoryTable_previous, #inventoryTable_next').on('click', function() {
-    const info = table.page.info();
-    const newPage = $(this).attr('id') === 'inventoryTable_previous' ? info.page - 1 : info.page + 1;
-    if (newPage >= 0 && newPage < info.pages) {
-      fetchProducts(newPage, info.length);
+    // Fix: Handle pagination with category filter (Issue #3: Pagination)
+    const newPage = $(this).attr('id') === 'inventoryTable_previous' ? currentPage - 1 : currentPage + 1;
+    if (newPage >= 0 && newPage < totalPages) {
+      currentPage = newPage;
+      const category = $('#filter-category').val();
+      if (category && category !== 'all') {
+        fetch(`http://localhost:8080/api/products/get-by-category/${encodeURIComponent(category)}?page=${currentPage}&size=${pageSize}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`Failed to fetch products for category ${category}: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            inventory = data.content || [];
+            totalPages = data.totalPages || 1;
+            const table = $('#inventoryTable').DataTable();
+            table.clear().rows.add(inventory).draw();
+            updateOverviewCards(inventory);
+          })
+          .catch(error => {
+            console.error('Error fetching paginated category products:', error);
+            Toastify({
+              text: `Failed to load page ${newPage + 1}: ${error.message}`,
+              duration: 3000,
+              style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
+            }).showToast();
+          });
+      } else {
+        fetchProducts(currentPage, pageSize);
+      }
     }
   });
 });
 
 function fetchProducts(page = 0, size = 10) {
+  // Fix: Update pagination variables and improve error handling (Issue #3: Pagination)
   console.log(`Fetching products: page=${page}, size=${size}`);
+  currentPage = page;
+  pageSize = size;
   fetch(`http://localhost:8080/api/products/get-all-products?page=${page}&size=${size}`)
     .then(response => {
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`HTTP error! Status: ${response.status} (${response.statusText})`);
       }
       return response.json();
     })
     .then(data => {
       console.log('API response:', data);
       inventory = data.content || [];
-      console.log('Inventory data:', inventory);
+      totalPages = data.totalPages || 1;
+      console.log('Inventory data:', inventory, 'Total pages:', totalPages);
       const table = $('#inventoryTable').DataTable();
       table.clear().rows.add(inventory).draw();
+      // Fix: Update stats after fetching products (Issue #4: Inventory Stats)
       updateOverviewCards(inventory);
       if (inventory.length === 0) {
         console.warn('No products returned from API');
         Toastify({
           text: 'No products found in the inventory.',
           duration: 3000,
-          backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+          style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
         }).showToast();
       }
     })
     .catch(error => {
       console.error('Error fetching products:', error);
       Toastify({
-        text: 'Failed to load products: ' + error.message,
-        duration: 3000,
-        backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+        // Fix: Detailed error message for better debugging
+        text: `Failed to load products: ${error.message}. Check if the server is running at http://localhost:8080.`,
+        duration: 5000,
+        style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
       }).showToast();
     });
 }
 
 function updateOverviewCards(data) {
+  // Fix: Handle null/undefined values and invalid dates (Issue #4: Inventory Stats)
   const today = new Date('2025-10-08');
-  $('#total-items').text(data.length);
-  $('#medium-stock').text(data.filter(item => item.productQuantity <= (item.reorderLevel || 0) && item.productQuantity > (item.reorderLevel || 0) * 0.5).length);
-  $('#low-stock').text(data.filter(item => item.productQuantity <= (item.reorderLevel || 0) * 0.5).length);
+  $('#total-items').text(data.length || 0);
+  $('#medium-stock').text(data.filter(item => {
+    const quantity = parseInt(item.productQuantity) || 0;
+    const reorderLevel = parseInt(item.reorderLevel || 0);
+    return quantity <= reorderLevel && quantity > reorderLevel * 0.5;
+  }).length);
+  $('#low-stock').text(data.filter(item => {
+    const quantity = parseInt(item.productQuantity) || 0;
+    const reorderLevel = parseInt(item.reorderLevel || 0);
+    return quantity <= reorderLevel * 0.5;
+  }).length);
   $('#expired').text(data.filter(item => {
     const expDate = new Date(item.expDate);
-    const daysToExpiry = (expDate - today) / (1000 * 60 * 60 * 24);
-    return daysToExpiry <= 30;
+    return isNaN(expDate.getTime()) || (expDate - today) / (1000 * 60 * 60 * 24) <= 30;
   }).length);
 }
 
@@ -552,13 +649,17 @@ function showViewModal(id) {
   fetch(`http://localhost:8080/api/products/get-product/${id}`)
     .then(response => {
       if (!response.ok) {
-        throw new Error('Failed to fetch product details');
+        throw new Error(`Failed to fetch product details: ${response.status}`);
       }
       return response.json();
     })
     .then(item => {
       if (!item) {
-        alert('Product not found');
+        Toastify({
+          text: 'Product not found',
+          duration: 3000,
+          style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
+        }).showToast();
         return;
       }
       console.log('Product details:', item);
@@ -596,9 +697,7 @@ function showViewModal(id) {
 
       const images = [item.productMainImage, ...(item.productSubImages || [])].filter(img => img && typeof img === 'string' && img.trim() !== '');
       if (images.length > 0) {
-        const validImages = images.map(img => {
-          return img.startsWith('http') ? img : `http://localhost:8080${img}`;
-        });
+        const validImages = images.map(img => img.startsWith('http') ? img : `http://localhost:8080${img}`);
         mainImage.attr('src', validImages[0]).removeClass('hidden');
         validImages.forEach((imgSrc, index) => {
           gallery.append(`<img src="${imgSrc}" alt="Product Image ${index + 1}" class="image-gallery-img ${index === 0 ? 'active' : ''}" onclick="updateMainImage('${imgSrc}', ${index})"/>`);
@@ -631,9 +730,9 @@ function showViewModal(id) {
     .catch(error => {
       console.error('Error fetching product details:', error);
       Toastify({
-        text: 'Failed to load product details: ' + error.message,
+        text: `Failed to load product details: ${error.message}`,
         duration: 3000,
-        backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+        style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
       }).showToast();
     });
 }
@@ -645,35 +744,49 @@ function updateMainImage(src, index) {
 }
 
 function showEditModal(id) {
+  // Fix: Ensure form is reset and populated correctly (Issue #1: Edit Form)
   console.log(`Fetching product for edit, ID: ${id}`);
   fetch(`http://localhost:8080/api/products/get-product/${id}`)
     .then(response => {
       if (!response.ok) {
-        throw new Error('Failed to fetch product for edit');
+        throw new Error(`Failed to fetch product for edit: ${response.status}`);
       }
       return response.json();
     })
     .then(item => {
+      if (!item) {
+        Toastify({
+          text: 'Product not found',
+          duration: 3000,
+          style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
+        }).showToast();
+        return;
+      }
+      console.log('Product for edit:', item);
+
       $('#modalTitle').text('Edit Medicine');
-      $('#name').val(item.productName);
-      $('#category').val(item.productCategory);
-      $('#subCategory').val(item.productSubCategory);
-      $('#sellingPrice').val(item.productPrice);
-      $('#costPrice').val(item.productOldPrice);
-      $('#productStock').val(item.productStock);
-      $('#productStatus').val(item.productStatus);
-      $('#description').val(item.productDescription);
-      $('#quantity').val(item.productQuantity);
+      $('#medicineForm')[0].reset(); // Reset form to clear previous values
+      $('#name').val(item.productName || '');
+      $('#category').val(item.productCategory || '');
+      $('#subCategory').val(item.productSubCategory || '');
+      $('#sellingPrice').val(item.productPrice ? item.productPrice.toFixed(2) : '');
+      $('#costPrice').val(item.productOldPrice ? item.productOldPrice.toFixed(2) : '');
+      $('#productStock').val(item.productStock || '');
+      $('#productStatus').val(item.productStatus || '');
+      $('#description').val(item.productDescription || '');
+      $('#quantity').val(item.productQuantity || 0);
       $('#prescriptionRequired').val(item.prescriptionRequired ? 'Yes' : 'No');
-      $('#brand').val(item.brandName);
-      $('#mfgDate').val(item.mfgDate);
-      $('#expDate').val(item.expDate);
-      $('#batchNumber').val(item.batchNo);
+      $('#brand').val(item.brandName || '');
+      $('#mfgDate').val(item.mfgDate || '');
+      $('#expDate').val(item.expDate || '');
+      $('#batchNumber').val(item.batchNo || '');
       $('#benefits').val((item.benefitsList || []).join('\n'));
       $('#directions').val((item.directionsList || []).join('\n'));
       $('#productSizes').val((item.productSizes || []).join('\n'));
 
-      $('#mainImagePreview').attr('src', item.productMainImage?.startsWith('http') ? item.productMainImage : `http://localhost:8080${item.productMainImage || ''}`).toggleClass('hidden', !item.productMainImage);
+      $('#mainImagePreview').attr('src', item.productMainImage ? 
+        (item.productMainImage.startsWith('http') ? item.productMainImage : `http://localhost:8080${item.productMainImage}`) : '')
+        .toggleClass('hidden', !item.productMainImage);
       $('#subImagesPreview').empty();
       (item.productSubImages || []).forEach((imgSrc, index) => {
         if (imgSrc) {
@@ -698,7 +811,6 @@ function showEditModal(id) {
       });
       $('.delete-custom-field').off('click').on('click', function() {
         $(this).parent().remove();
-        updateOverviewCards(inventory);
       });
 
       $('#medicineForm').data('editId', id);
@@ -707,9 +819,9 @@ function showEditModal(id) {
     .catch(error => {
       console.error('Error fetching product for edit:', error);
       Toastify({
-        text: 'Failed to load product for edit: ' + error.message,
+        text: `Failed to load product for edit: ${error.message}`,
         duration: 3000,
-        backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+        style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
       }).showToast();
     });
 }
@@ -726,25 +838,26 @@ function deleteItem() {
   })
     .then(response => {
       if (!response.ok) {
-        throw new Error('Failed to delete product');
+        throw new Error(`Failed to delete product: ${response.status}`);
       }
       return response.text();
     })
     .then(message => {
-      fetchProducts();
+      // Fix: Refresh products and stats after delete (Issue #4: Inventory Stats)
+      fetchProducts(currentPage, pageSize);
       closeModal('deleteModal');
       Toastify({
-        text: message,
+        text: message || 'Product deleted successfully!',
         duration: 3000,
-        backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+        style: { background: 'linear-gradient(to right, #00b09b, #96c93d)' }
       }).showToast();
     })
     .catch(error => {
       console.error('Error deleting product:', error);
       Toastify({
-        text: 'Failed to delete product: ' + error.message,
+        text: `Failed to delete product: ${error.message}`,
         duration: 3000,
-        backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+        style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
       }).showToast();
     });
 }
