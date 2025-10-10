@@ -1,4 +1,3 @@
-// Assuming Toastify and SheetJS are included via CDN in the HTML
 const user = {
   name: "Shreya Kamble",
   role: "Admin"
@@ -21,10 +20,8 @@ function displayUserProfile() {
 
 displayUserProfile();
 
-// Inventory data store
 let inventory = [];
 
-// Debounce function to prevent rapid clicks
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {
@@ -37,7 +34,6 @@ function debounce(func, wait) {
   };
 }
 
-// Function to update sidebar arrow based on state
 function updateSidebarArrow(isHidden, isCollapsed, isMobileView) {
   const arrow = $('#sidebar-arrow');
   if (isMobileView) {
@@ -50,11 +46,11 @@ function updateSidebarArrow(isHidden, isCollapsed, isMobileView) {
 }
 
 $(document).ready(function() {
-  // Initialize DataTable
   const table = $('#inventoryTable').DataTable({
     scrollX: true,
     fixedHeader: true,
     autoWidth: false,
+    searching: false, // Disable search functionality
     columns: [
       { 
         data: null, 
@@ -76,12 +72,12 @@ $(document).ready(function() {
       },
       { 
         data: 'productOldPrice', 
-        render: $.fn.dataTable.render.number(',', '.', 2, '$'),
+        render: $.fn.dataTable.render.number(',', '.', 2, '₹'),
         className: "text-right"
       },
       { 
         data: 'productPrice', 
-        render: $.fn.dataTable.render.number(',', '.', 2, '$'),
+        render: $.fn.dataTable.render.number(',', '.', 2, '₹'),
         className: "text-right"
       },
       { data: 'expDate', className: "text-left" },
@@ -128,32 +124,30 @@ $(document).ready(function() {
       }
     },
     pageLength: 10,
+    lengthMenu: [10, 25, 50, 100],
     language: {
-      search: "",
-      searchPlaceholder: "Search table...",
+      search: "", // Not used since searching is disabled
+      searchPlaceholder: "", // Not used
       lengthMenu: "Show _MENU_ entries",
       info: "Showing _START_ to _END_ of _TOTAL_ entries",
+      emptyTable: "No products available in the inventory.",
       paginate: {
         previous: "<i class='fas fa-chevron-left'></i>",
         next: "<i class='fas fa-chevron-right'></i>"
       }
     },
-    dom: '<"flex justify-between items-center mb-4"l>rt<"flex justify-between items-center mt-4"ip>'
+    dom: '<"flex justify-between items-center mb-4"l>rt<"flex justify-between items-center mt-4"ip>' // Removed 'f' to exclude search input
   });
 
-  // Fetch all products
   fetchProducts();
 
-  // Initialize Flatpickr
   flatpickr(".flatpickr", {
     dateFormat: "Y-m-d"
   });
 
-  // Sidebar Toggle Functionality
   let isSidebarHidden = true;
   let isSidebarCollapsed = false;
 
-  // Debounced toggle functions
   const toggleSidebarMobile = debounce(function() {
     const sidebar = $('#sidebar');
     const isMobileView = window.matchMedia('(max-width: 768px)').matches;
@@ -187,11 +181,9 @@ $(document).ready(function() {
     updateSidebarArrow(isSidebarHidden, isSidebarCollapsed, isMobileView);
   }, 100);
 
-  // Attach debounced event handlers
   $('#toggle-sidebar-mobile, #close-sidebar').on('click', toggleSidebarMobile);
   $('#toggle-sidebar-logo').on('click', toggleSidebarLogo);
 
-  // Add Medicine Modal
   $('#add-medicine').click(function() {
     $('#modalTitle').text('Add Medicine');
     $('#medicineForm')[0].reset();
@@ -202,12 +194,10 @@ $(document).ready(function() {
     $('#medicineModal').show();
   });
 
-  // Close Modals
   $('.close').click(function() {
     closeModal($(this).closest('.modal').attr('id'));
   });
 
-  // Image Previews
   $('#mainImage').change(function(event) {
     const file = event.target.files[0];
     if (file) {
@@ -240,7 +230,6 @@ $(document).ready(function() {
     });
   });
 
-  // Custom Fields Functionality
   $('#toggle-custom-fields').click(function() {
     $('#custom-fields').toggleClass('hidden');
   });
@@ -256,10 +245,10 @@ $(document).ready(function() {
     `);
     $('.delete-custom-field').off('click').on('click', function() {
       $(this).parent().remove();
+      updateOverviewCards(inventory);
     });
   });
 
-  // Form Submission
   $('#medicineForm').submit(function(e) {
     e.preventDefault();
     const formData = new FormData();
@@ -328,23 +317,34 @@ $(document).ready(function() {
       });
   });
 
-  // Category Filter
   $('#filter-category').change(function() {
     const category = $(this).val();
     if (category) {
       fetch(`http://localhost:8080/api/products/get-by-category/${category}`)
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch products by category');
+          }
+          return response.json();
+        })
         .then(data => {
+          inventory = data;
           table.clear().rows.add(data).draw();
           updateOverviewCards(data);
         })
-        .catch(error => console.error('Error fetching products by category:', error));
+        .catch(error => {
+          console.error('Error fetching products by category:', error);
+          Toastify({
+            text: 'Failed to load products for category: ' + error.message,
+            duration: 3000,
+            backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+          }).showToast();
+        });
     } else {
       fetchProducts();
     }
   });
 
-  // Bulk Upload Modal
   $('#bulk-upload').click(function() {
     $('#bulkUploadModal').show();
     $('#bulkUploadForm')[0].reset();
@@ -355,7 +355,6 @@ $(document).ready(function() {
     $('#bulkSkippedReasonsList').empty();
   });
 
-  // Bulk Upload Form Submission
   $('#bulkUploadForm').submit(function(e) {
     e.preventDefault();
     const formData = new FormData();
@@ -368,7 +367,6 @@ $(document).ready(function() {
         formData.append('productImages', file);
       });
 
-      // Show loader
       $('#bulkUploadOverlay').removeClass('hidden');
       $('#bulkUploadLoader').removeClass('hidden');
       $('#bulkUploadAcknowledgment').addClass('hidden');
@@ -384,7 +382,6 @@ $(document).ready(function() {
           return response.json();
         })
         .then(data => {
-          // Hide loader and show acknowledgment after 1.5s
           setTimeout(() => {
             $('#bulkUploadLoader').addClass('hidden');
             $('#bulkUploadedCount').text(data.uploadedCount || 0);
@@ -431,7 +428,6 @@ $(document).ready(function() {
     }
   });
 
-  // Reset Bulk Upload
   window.resetBulkUpload = function() {
     $('#bulkUploadAcknowledgment').addClass('hidden');
     $('#bulkUploadOverlay').addClass('hidden');
@@ -440,10 +436,14 @@ $(document).ready(function() {
     $('#bulkSkippedReasonsList').empty();
   };
 
-  // Export Excel
   $('#export-csv').click(function() {
     fetch('http://localhost:8080/api/products/get-all-products')
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch products for export');
+        }
+        return response.json();
+      })
       .then(data => {
         const products = data.content || [];
         const wsData = [
@@ -470,24 +470,67 @@ $(document).ready(function() {
         XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
         XLSX.writeFile(wb, 'inventory_export.xlsx');
       })
-      .catch(error => console.error('Error exporting Excel:', error));
+      .catch(error => {
+        console.error('Error exporting Excel:', error);
+        Toastify({
+          text: 'Failed to export Excel: ' + error.message,
+          duration: 3000,
+          backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+        }).showToast();
+      });
   });
 
-  // Delete confirmation
   $('#confirmDelete').click(function() {
     deleteItem();
+  });
+
+  $('#inventoryTable_length select').on('change', function() {
+    const pageSize = parseInt($(this).val());
+    fetchProducts(0, pageSize);
+  });
+
+  $('#inventoryTable_previous, #inventoryTable_next').on('click', function() {
+    const info = table.page.info();
+    const newPage = $(this).attr('id') === 'inventoryTable_previous' ? info.page - 1 : info.page + 1;
+    if (newPage >= 0 && newPage < info.pages) {
+      fetchProducts(newPage, info.length);
+    }
   });
 });
 
 function fetchProducts(page = 0, size = 10) {
+  console.log(`Fetching products: page=${page}, size=${size}`);
   fetch(`http://localhost:8080/api/products/get-all-products?page=${page}&size=${size}`)
-    .then(response => response.json())
-    .then(data => {
-      inventory = data.content || [];
-      $('#inventoryTable').DataTable().clear().rows.add(inventory).draw();
-      updateOverviewCards(inventory);
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
     })
-    .catch(error => console.error('Error fetching products:', error));
+    .then(data => {
+      console.log('API response:', data);
+      inventory = data.content || [];
+      console.log('Inventory data:', inventory);
+      const table = $('#inventoryTable').DataTable();
+      table.clear().rows.add(inventory).draw();
+      updateOverviewCards(inventory);
+      if (inventory.length === 0) {
+        console.warn('No products returned from API');
+        Toastify({
+          text: 'No products found in the inventory.',
+          duration: 3000,
+          backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+        }).showToast();
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching products:', error);
+      Toastify({
+        text: 'Failed to load products: ' + error.message,
+        duration: 3000,
+        backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+      }).showToast();
+    });
 }
 
 function updateOverviewCards(data) {
@@ -505,6 +548,7 @@ function updateOverviewCards(data) {
 let currentImageIndex = 0;
 
 function showViewModal(id) {
+  console.log(`Fetching product details for ID: ${id}`);
   fetch(`http://localhost:8080/api/products/get-product/${id}`)
     .then(response => {
       if (!response.ok) {
@@ -517,6 +561,7 @@ function showViewModal(id) {
         alert('Product not found');
         return;
       }
+      console.log('Product details:', item);
       const detailsHtml = `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div><strong>Product Name:</strong> ${item.productName || 'N/A'}</div>
@@ -525,8 +570,8 @@ function showViewModal(id) {
           <div><strong>Brand:</strong> ${item.brandName || 'N/A'}</div>
           <div><strong>Batch Number:</strong> ${item.batchNo || 'N/A'}</div>
           <div><strong>Quantity:</strong> ${item.productQuantity || 0}</div>
-          <div><strong>Cost Price:</strong> $${(item.productOldPrice || 0).toFixed(2)}</div>
-          <div><strong>Selling Price:</strong> $${(item.productPrice || 0).toFixed(2)}</div>
+          <div><strong>Cost Price:</strong> ₹${(item.productOldPrice || 0).toFixed(2)}</div>
+          <div><strong>Selling Price:</strong> ₹${(item.productPrice || 0).toFixed(2)}</div>
           <div><strong>Expiry Date:</strong> ${item.expDate || 'N/A'}</div>
           <div><strong>Prescription Required:</strong> ${item.prescriptionRequired ? 'Yes' : 'No'}</div>
           <div class="md:col-span-2"><strong>Description:</strong> ${item.productDescription || 'None'}</div>
@@ -551,12 +596,15 @@ function showViewModal(id) {
 
       const images = [item.productMainImage, ...(item.productSubImages || [])].filter(img => img && typeof img === 'string' && img.trim() !== '');
       if (images.length > 0) {
-        mainImage.attr('src', images[0]).removeClass('hidden');
-        images.forEach((imgSrc, index) => {
+        const validImages = images.map(img => {
+          return img.startsWith('http') ? img : `http://localhost:8080${img}`;
+        });
+        mainImage.attr('src', validImages[0]).removeClass('hidden');
+        validImages.forEach((imgSrc, index) => {
           gallery.append(`<img src="${imgSrc}" alt="Product Image ${index + 1}" class="image-gallery-img ${index === 0 ? 'active' : ''}" onclick="updateMainImage('${imgSrc}', ${index})"/>`);
         });
-        navLeft.toggleClass('hidden', images.length <= 1);
-        navRight.toggleClass('hidden', images.length <= 1);
+        navLeft.toggleClass('hidden', validImages.length <= 1);
+        navRight.toggleClass('hidden', validImages.length <= 1);
       } else {
         mainImage.attr('src', 'https://via.placeholder.com/400?text=No+Image').removeClass('hidden');
         gallery.append('<p class="text-gray-500 text-center">No images available</p>');
@@ -567,14 +615,14 @@ function showViewModal(id) {
       navLeft.off('click').on('click', () => {
         if (currentImageIndex > 0) {
           currentImageIndex--;
-          updateMainImage(images[currentImageIndex], currentImageIndex);
+          updateMainImage(validImages[currentImageIndex], currentImageIndex);
         }
       });
 
       navRight.off('click').on('click', () => {
-        if (currentImageIndex < images.length - 1) {
+        if (currentImageIndex < validImages.length - 1) {
           currentImageIndex++;
-          updateMainImage(images[currentImageIndex], currentImageIndex);
+          updateMainImage(validImages[currentImageIndex], currentImageIndex);
         }
       });
 
@@ -582,7 +630,11 @@ function showViewModal(id) {
     })
     .catch(error => {
       console.error('Error fetching product details:', error);
-      alert('Failed to load product details: ' + error.message);
+      Toastify({
+        text: 'Failed to load product details: ' + error.message,
+        duration: 3000,
+        backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+      }).showToast();
     });
 }
 
@@ -593,8 +645,14 @@ function updateMainImage(src, index) {
 }
 
 function showEditModal(id) {
+  console.log(`Fetching product for edit, ID: ${id}`);
   fetch(`http://localhost:8080/api/products/get-product/${id}`)
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch product for edit');
+      }
+      return response.json();
+    })
     .then(item => {
       $('#modalTitle').text('Edit Medicine');
       $('#name').val(item.productName);
@@ -615,12 +673,13 @@ function showEditModal(id) {
       $('#directions').val((item.directionsList || []).join('\n'));
       $('#productSizes').val((item.productSizes || []).join('\n'));
 
-      $('#mainImagePreview').attr('src', item.productMainImage || '').toggleClass('hidden', !item.productMainImage);
+      $('#mainImagePreview').attr('src', item.productMainImage?.startsWith('http') ? item.productMainImage : `http://localhost:8080${item.productMainImage || ''}`).toggleClass('hidden', !item.productMainImage);
       $('#subImagesPreview').empty();
       (item.productSubImages || []).forEach((imgSrc, index) => {
         if (imgSrc) {
+          const validImgSrc = imgSrc.startsWith('http') ? imgSrc : `http://localhost:8080${imgSrc}`;
           $('#subImagesPreview').append(
-            `<img src="${imgSrc}" alt="Sub Image Preview ${index + 1}" class="image-preview w-24 h-24 object-cover rounded" />`
+            `<img src="${validImgSrc}" alt="Sub Image Preview ${index + 1}" class="image-preview w-24 h-24 object-cover rounded" />`
           );
         }
       });
@@ -639,12 +698,20 @@ function showEditModal(id) {
       });
       $('.delete-custom-field').off('click').on('click', function() {
         $(this).parent().remove();
+        updateOverviewCards(inventory);
       });
 
       $('#medicineForm').data('editId', id);
       $('#medicineModal').show();
     })
-    .catch(error => console.error('Error fetching product for edit:', error));
+    .catch(error => {
+      console.error('Error fetching product for edit:', error);
+      Toastify({
+        text: 'Failed to load product for edit: ' + error.message,
+        duration: 3000,
+        backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+      }).showToast();
+    });
 }
 
 function showDeleteConfirm(id) {
@@ -657,7 +724,12 @@ function deleteItem() {
   fetch(`http://localhost:8080/api/products/delete-product/${id}`, {
     method: 'DELETE'
   })
-    .then(response => response.text())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to delete product');
+      }
+      return response.text();
+    })
     .then(message => {
       fetchProducts();
       closeModal('deleteModal');
@@ -667,7 +739,14 @@ function deleteItem() {
         backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
       }).showToast();
     })
-    .catch(error => console.error('Error deleting product:', error));
+    .catch(error => {
+      console.error('Error deleting product:', error);
+      Toastify({
+        text: 'Failed to delete product: ' + error.message,
+        duration: 3000,
+        backgroundColor: 'linear-gradient(to right, #ff5e62, #f09819)'
+      }).showToast();
+    });
 }
 
 function closeModal(modalId) {
