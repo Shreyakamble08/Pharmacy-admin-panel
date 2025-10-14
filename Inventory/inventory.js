@@ -1,3 +1,5 @@
+
+
 // User profile data
 const user = {
   name: "Shreya Kamble",
@@ -22,11 +24,11 @@ function displayUserProfile() {
 
 displayUserProfile();
 
-// Global variables for inventory and pagination
+// Global variables
 let inventory = [];
-let totalPages = 1;
-let currentPage = 0;
-let pageSize = 10;
+let dataTable;
+let isEditMode = false;
+let currentEditId = null;
 
 // Debounce function to prevent rapid sidebar toggling
 function debounce(func, wait) {
@@ -54,96 +56,8 @@ function updateSidebarArrow(isHidden, isCollapsed, isMobileView) {
 }
 
 $(document).ready(function() {
-  // Initialize DataTable with fixed search disabled and pagination support
-  const table = $('#inventoryTable').DataTable({
-    scrollX: true,
-    fixedHeader: true,
-    autoWidth: false,
-    searching: false, // Search disabled as per previous requirement
-    columns: [
-      { 
-        data: null, 
-        // Fix: Use _iDisplayStart for correct row numbering across pages (Issue #3: Pagination)
-        render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1,
-        className: "text-center"
-      },
-      { data: 'productName', className: "text-left" },
-      { data: 'productCategory', className: "text-left" },
-      { data: 'productSubCategory', className: "text-left" },
-      { data: 'batchNo', className: "text-left" },
-      { data: 'productQuantity', className: "text-center" },
-      { 
-        data: 'reorderLevel', 
-        defaultContent: "N/A",
-        className: "text-center"
-      },
-      { 
-        data: 'productOldPrice', 
-        render: $.fn.dataTable.render.number(',', '.', 2, '₹'),
-        className: "text-right"
-      },
-      { 
-        data: 'productPrice', 
-        render: $.fn.dataTable.render.number(',', '.', 2, '₹'),
-        className: "text-right"
-      },
-      { data: 'expDate', className: "text-left" },
-      { data: 'brandName', className: "text-left" },
-      { 
-        data: 'storageLocation', 
-        defaultContent: "N/A",
-        className: "text-left"
-      },
-      { 
-        data: 'prescriptionRequired',
-        render: data => data ? 'Yes' : 'No',
-        className: "text-center"
-      },
-      {
-        data: null,
-        render: (data) => `
-          <div class="flex justify-center space-x-2">
-            <button onclick="showViewModal(${data.productId})" class="action-btn bg-blue-100 text-blue-600" title="View"><i class="fas fa-eye"></i></button>
-            <button onclick="showEditModal(${data.productId})" class="action-btn bg-green-100 text-green-600" title="Edit"><i class="fas fa-edit"></i></button>
-            <button onclick="showDeleteConfirm(${data.productId})" class="action-btn bg-red-100 text-red-600" title="Delete"><i class="fas fa-trash"></i></button>
-          </div>
-        `,
-        orderable: false
-      }
-    ],
-    createdRow: function(row, data, dataIndex) {
-      // Fix: Handle invalid dates and quantities for stats (Issue #4: Inventory Stats)
-      const quantity = parseInt(data.productQuantity) || 0;
-      const reorderLevel = parseInt(data.reorderLevel || 0);
-      const expDate = new Date(data.expDate);
-      const today = new Date('2025-10-08');
-      const daysToExpiry = (expDate - today) / (1000 * 60 * 60 * 24);
-      
-      $(row).removeClass('alert-medium alert-low alert-expired');
-      if (isNaN(daysToExpiry) || daysToExpiry <= 30) {
-        $(row).addClass('alert-expired');
-      } else if (quantity <= reorderLevel * 0.5) {
-        $(row).addClass('alert-low');
-      } else if (quantity <= reorderLevel) {
-        $(row).addClass('alert-medium');
-      }
-    },
-    pageLength: pageSize,
-    lengthMenu: [10, 25, 50, 100],
-    language: {
-      lengthMenu: "Show _MENU_ entries",
-      info: "Showing _START_ to _END_ of _TOTAL_ entries",
-      emptyTable: "No products available in the inventory.",
-      paginate: {
-        previous: "<i class='fas fa-chevron-left'></i>",
-        next: "<i class='fas fa-chevron-right'></i>"
-      }
-    },
-    dom: '<"flex justify-between items-center mb-4"l>rt<"flex justify-between items-center mt-4"ip>'
-  });
-
-  // Initial fetch of products
-  fetchProducts();
+  // Initialize DataTable with proper configuration
+  initializeDataTable();
 
   flatpickr(".flatpickr", {
     dateFormat: "Y-m-d"
@@ -189,12 +103,16 @@ $(document).ready(function() {
   $('#toggle-sidebar-logo').on('click', toggleSidebarLogo);
 
   $('#add-medicine').click(function() {
+    isEditMode = false;
+    currentEditId = null;
     $('#modalTitle').text('Add Medicine');
     $('#medicineForm')[0].reset();
     $('#mainImagePreview').attr('src', '').addClass('hidden');
     $('#subImagesPreview').empty();
     $('#custom-fields').addClass('hidden');
     $('#custom-fields-container').empty();
+    $('#mainImageRequired').removeClass('hidden');
+    $('#mainImage').prop('required', true);
     $('#medicineForm').removeData('editId');
     $('#medicineModal').show();
   });
@@ -286,19 +204,31 @@ $(document).ready(function() {
     };
 
     formData.append('productData', JSON.stringify(productData));
-    if ($('#mainImage').prop('files')[0]) {
-      formData.append('productMainImage', $('#mainImage').prop('files')[0]);
+    
+    // For edit mode, only append images if new ones are selected
+    if (isEditMode) {
+      if ($('#mainImage').prop('files')[0]) {
+        formData.append('productMainImage', $('#mainImage').prop('files')[0]);
+      }
+      const subImages = $('#subImages').prop('files');
+      Array.from(subImages).slice(0, 4).forEach(file => {
+        formData.append('productSubImages', file);
+      });
+    } else {
+      // For add mode, main image is required
+      if ($('#mainImage').prop('files')[0]) {
+        formData.append('productMainImage', $('#mainImage').prop('files')[0]);
+      }
+      const subImages = $('#subImages').prop('files');
+      Array.from(subImages).slice(0, 4).forEach(file => {
+        formData.append('productSubImages', file);
+      });
     }
-    const subImages = $('#subImages').prop('files');
-    Array.from(subImages).slice(0, 4).forEach(file => {
-      formData.append('productSubImages', file);
-    });
 
-    const editId = $('#medicineForm').data('editId');
-    const url = editId 
-      ? `http://localhost:8080/api/products/patch-product/${editId}`
+    const url = isEditMode 
+      ? `http://localhost:8080/api/products/patch-product/${currentEditId}`
       : 'http://localhost:8080/api/products/create-product';
-    const method = editId ? 'PATCH' : 'POST';
+    const method = isEditMode ? 'PATCH' : 'POST';
 
     fetch(url, {
       method: method,
@@ -306,20 +236,20 @@ $(document).ready(function() {
     })
       .then(response => {
         if (!response.ok) {
-          throw new Error(`Failed to ${editId ? 'update' : 'create'} product: ${response.status}`);
+          throw new Error(`Failed to ${isEditMode ? 'update' : 'create'} product: ${response.status}`);
         }
         return response.json();
       })
       .then(data => {
-        // Fix: Refresh products with current page and size, update stats (Issue #4: Inventory Stats)
-        fetchProducts(currentPage, pageSize);
+        fetchAllProducts();
         closeModal('medicineModal');
         Toastify({
-          text: editId ? 'Product updated successfully!' : 'Product added successfully!',
+          text: isEditMode ? 'Product updated successfully!' : 'Product added successfully!',
           duration: 3000,
           style: { background: 'linear-gradient(to right, #00b09b, #96c93d)' }
         }).showToast();
-        $('#medicineForm').removeData('editId');
+        isEditMode = false;
+        currentEditId = null;
       })
       .catch(error => {
         console.error('Error saving product:', error);
@@ -331,43 +261,29 @@ $(document).ready(function() {
       });
   });
 
+  // Simple Client-side Category Filter
   $('#filter-category').change(function() {
-    // Fix: Reset to first page and support "All Categories" (Issue #2: Category Filter)
     const category = $(this).val();
-    currentPage = 0;
-    if (category && category !== 'all') {
-      fetch(`http://localhost:8080/api/products/get-by-category/${encodeURIComponent(category)}?page=${currentPage}&size=${pageSize}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Failed to fetch products for category ${category}: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          inventory = data.content || [];
-          totalPages = data.totalPages || 1;
-          const table = $('#inventoryTable').DataTable();
-          table.clear().rows.add(inventory).draw();
-          // Fix: Update stats after filtering (Issue #4: Inventory Stats)
-          updateOverviewCards(inventory);
-          if (inventory.length === 0) {
-            Toastify({
-              text: `No products found for category: ${category}`,
-              duration: 3000,
-              style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
-            }).showToast();
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching products by category:', error);
-          Toastify({
-            text: `Failed to load products for category: ${error.message}`,
-            duration: 3000,
-            style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
-          }).showToast();
-        });
+    
+    if (category && category !== '') {
+      // Client-side filtering only
+      const filteredProducts = inventory.filter(item => 
+        item.productCategory === category
+      );
+      updateDataTable(filteredProducts);
+      updateOverviewCards(filteredProducts);
+      
+      if (filteredProducts.length === 0) {
+        Toastify({
+          text: `No products found for category: ${category}`,
+          duration: 3000,
+          style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
+        }).showToast();
+      }
     } else {
-      fetchProducts(currentPage, pageSize);
+      // Show all products
+      updateDataTable(inventory);
+      updateOverviewCards(inventory);
     }
   });
 
@@ -426,8 +342,7 @@ $(document).ready(function() {
             }
 
             $('#bulkUploadAcknowledgment').removeClass('hidden');
-            // Fix: Refresh products and stats after bulk upload (Issue #4: Inventory Stats)
-            fetchProducts(currentPage, pageSize);
+            fetchAllProducts();
             Toastify({
               text: `Successfully imported ${data.uploadedCount || 'multiple'} items`,
               duration: 3000,
@@ -465,7 +380,7 @@ $(document).ready(function() {
   };
 
   $('#export-csv').click(function() {
-    fetch(`http://localhost:8080/api/products/get-all-products?page=${currentPage}&size=${pageSize}`)
+    fetch(`http://localhost:8080/api/products/get-all-products?page=0&size=1000`)
       .then(response => {
         if (!response.ok) {
           throw new Error(`Failed to fetch products for export: ${response.status}`);
@@ -512,98 +427,115 @@ $(document).ready(function() {
     deleteItem();
   });
 
-  $('#inventoryTable_length select').on('change', function() {
-    // Fix: Update pageSize and reset to first page (Issue #3: Pagination)
-    pageSize = parseInt($(this).val());
-    currentPage = 0;
-    const category = $('#filter-category').val();
-    if (category && category !== 'all') {
-      fetch(`http://localhost:8080/api/products/get-by-category/${encodeURIComponent(category)}?page=${currentPage}&size=${pageSize}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Failed to fetch products for category ${category}: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          inventory = data.content || [];
-          totalPages = data.totalPages || 1;
-          const table = $('#inventoryTable').DataTable();
-          table.clear().rows.add(inventory).draw();
-          updateOverviewCards(inventory);
-        })
-        .catch(error => {
-          console.error('Error fetching paginated category products:', error);
-          Toastify({
-            text: `Failed to load page ${currentPage + 1}: ${error.message}`,
-            duration: 3000,
-            style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
-          }).showToast();
-        });
-    } else {
-      fetchProducts(currentPage, pageSize);
-    }
-  });
-
-  $('#inventoryTable_previous, #inventoryTable_next').on('click', function() {
-    // Fix: Handle pagination with category filter (Issue #3: Pagination)
-    const newPage = $(this).attr('id') === 'inventoryTable_previous' ? currentPage - 1 : currentPage + 1;
-    if (newPage >= 0 && newPage < totalPages) {
-      currentPage = newPage;
-      const category = $('#filter-category').val();
-      if (category && category !== 'all') {
-        fetch(`http://localhost:8080/api/products/get-by-category/${encodeURIComponent(category)}?page=${currentPage}&size=${pageSize}`)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error(`Failed to fetch products for category ${category}: ${response.status}`);
-            }
-            return response.json();
-          })
-          .then(data => {
-            inventory = data.content || [];
-            totalPages = data.totalPages || 1;
-            const table = $('#inventoryTable').DataTable();
-            table.clear().rows.add(inventory).draw();
-            updateOverviewCards(inventory);
-          })
-          .catch(error => {
-            console.error('Error fetching paginated category products:', error);
-            Toastify({
-              text: `Failed to load page ${newPage + 1}: ${error.message}`,
-              duration: 3000,
-              style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
-            }).showToast();
-          });
-      } else {
-        fetchProducts(currentPage, pageSize);
-      }
-    }
-  });
+  // Load initial data
+  fetchAllProducts();
 });
 
-function fetchProducts(page = 0, size = 10) {
-  // Fix: Update pagination variables and improve error handling (Issue #3: Pagination)
-  console.log(`Fetching products: page=${page}, size=${size}`);
-  currentPage = page;
-  pageSize = size;
-  fetch(`http://localhost:8080/api/products/get-all-products?page=${page}&size=${size}`)
+function initializeDataTable() {
+  dataTable = $('#inventoryTable').DataTable({
+    scrollX: false,
+    fixedHeader: true,
+    autoWidth: false,
+    searching: true,
+    paging: true,
+    pageLength: 10,
+    lengthMenu: [10, 25, 50, 100],
+    processing: true,
+    serverSide: false,
+    columns: [
+      { 
+        data: null, 
+        render: (data, type, row, meta) => meta.row + 1,
+        className: "text-center",
+        orderable: false
+      },
+      { data: 'productName', className: "text-left" },
+      { data: 'productCategory', className: "text-left" },
+      { data: 'productSubCategory', className: "text-left" },
+      { data: 'batchNo', className: "text-left" },
+      { data: 'productQuantity', className: "text-center" },
+      { 
+        data: 'productOldPrice', 
+        render: $.fn.dataTable.render.number(',', '.', 2, '₹'),
+        className: "text-right"
+      },
+      { 
+        data: 'productPrice', 
+        render: $.fn.dataTable.render.number(',', '.', 2, '₹'),
+        className: "text-right"
+      },
+      { data: 'expDate', className: "text-left" },
+      { data: 'brandName', className: "text-left" },
+      { 
+        data: 'prescriptionRequired',
+        render: data => data ? 'Yes' : 'No',
+        className: "text-center"
+      },
+      {
+        data: null,
+        render: (data) => `
+          <div class="flex justify-center space-x-2">
+            <button onclick="showViewModal(${data.productId})" class="action-btn bg-blue-100 text-blue-600" title="View"><i class="fas fa-eye"></i></button>
+            <button onclick="showEditModal(${data.productId})" class="action-btn bg-green-100 text-green-600" title="Edit"><i class="fas fa-edit"></i></button>
+            <button onclick="showDeleteConfirm(${data.productId})" class="action-btn bg-red-100 text-red-600" title="Delete"><i class="fas fa-trash"></i></button>
+          </div>
+        `,
+        orderable: false
+      }
+    ],
+    createdRow: function(row, data, dataIndex) {
+      const quantity = parseInt(data.productQuantity) || 0;
+      const expDate = new Date(data.expDate);
+      const today = new Date('2025-10-08');
+      const daysToExpiry = (expDate - today) / (1000 * 60 * 60 * 24);
+      
+      $(row).removeClass('alert-medium alert-low alert-expired');
+      if (isNaN(daysToExpiry) || daysToExpiry <= 30) {
+        $(row).addClass('alert-expired');
+      } else if (quantity <= 10) {
+        $(row).addClass('alert-low');
+      } else if (quantity <= 25) {
+        $(row).addClass('alert-medium');
+      }
+    },
+    language: {
+      lengthMenu: "Show _MENU_ entries",
+      info: "Showing _START_ to _END_ of _TOTAL_ entries",
+      infoEmpty: "Showing 0 to 0 of 0 entries",
+      infoFiltered: "(filtered from _MAX_ total entries)",
+      emptyTable: "No products available in the inventory.",
+      paginate: {
+        previous: "<i class='fas fa-chevron-left'></i>",
+        next: "<i class='fas fa-chevron-right'></i>"
+      }
+    },
+    dom: '<"flex justify-between items-center mb-4"lf>rt<"flex justify-between items-center mt-4"ip>'
+  });
+}
+
+function updateDataTable(data) {
+  if (dataTable) {
+    dataTable.clear();
+    dataTable.rows.add(data);
+    dataTable.draw();
+  }
+}
+
+function fetchAllProducts() {
+  fetch('http://localhost:8080/api/products/get-all-products?page=0&size=1000')
     .then(response => {
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status} (${response.statusText})`);
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
       return response.json();
     })
     .then(data => {
-      console.log('API response:', data);
-      inventory = data.content || [];
-      totalPages = data.totalPages || 1;
-      console.log('Inventory data:', inventory, 'Total pages:', totalPages);
-      const table = $('#inventoryTable').DataTable();
-      table.clear().rows.add(inventory).draw();
-      // Fix: Update stats after fetching products (Issue #4: Inventory Stats)
-      updateOverviewCards(inventory);
-      if (inventory.length === 0) {
-        console.warn('No products returned from API');
+      const products = data.content || [];
+      inventory = products;
+      updateDataTable(products);
+      updateOverviewCards(products);
+      
+      if (products.length === 0) {
         Toastify({
           text: 'No products found in the inventory.',
           duration: 3000,
@@ -614,8 +546,7 @@ function fetchProducts(page = 0, size = 10) {
     .catch(error => {
       console.error('Error fetching products:', error);
       Toastify({
-        // Fix: Detailed error message for better debugging
-        text: `Failed to load products: ${error.message}. Check if the server is running at http://localhost:8080.`,
+        text: `Failed to load products: ${error.message}`,
         duration: 5000,
         style: { background: 'linear-gradient(to right, #ff5e62, #f09819)' }
       }).showToast();
@@ -623,18 +554,15 @@ function fetchProducts(page = 0, size = 10) {
 }
 
 function updateOverviewCards(data) {
-  // Fix: Handle null/undefined values and invalid dates (Issue #4: Inventory Stats)
   const today = new Date('2025-10-08');
   $('#total-items').text(data.length || 0);
   $('#medium-stock').text(data.filter(item => {
     const quantity = parseInt(item.productQuantity) || 0;
-    const reorderLevel = parseInt(item.reorderLevel || 0);
-    return quantity <= reorderLevel && quantity > reorderLevel * 0.5;
+    return quantity <= 25 && quantity > 10;
   }).length);
   $('#low-stock').text(data.filter(item => {
     const quantity = parseInt(item.productQuantity) || 0;
-    const reorderLevel = parseInt(item.reorderLevel || 0);
-    return quantity <= reorderLevel * 0.5;
+    return quantity <= 10;
   }).length);
   $('#expired').text(data.filter(item => {
     const expDate = new Date(item.expDate);
@@ -645,7 +573,6 @@ function updateOverviewCards(data) {
 let currentImageIndex = 0;
 
 function showViewModal(id) {
-  console.log(`Fetching product details for ID: ${id}`);
   fetch(`http://localhost:8080/api/products/get-product/${id}`)
     .then(response => {
       if (!response.ok) {
@@ -662,7 +589,6 @@ function showViewModal(id) {
         }).showToast();
         return;
       }
-      console.log('Product details:', item);
       const detailsHtml = `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div><strong>Product Name:</strong> ${item.productName || 'N/A'}</div>
@@ -744,8 +670,9 @@ function updateMainImage(src, index) {
 }
 
 function showEditModal(id) {
-  // Fix: Ensure form is reset and populated correctly (Issue #1: Edit Form)
-  console.log(`Fetching product for edit, ID: ${id}`);
+  isEditMode = true;
+  currentEditId = id;
+  
   fetch(`http://localhost:8080/api/products/get-product/${id}`)
     .then(response => {
       if (!response.ok) {
@@ -762,10 +689,9 @@ function showEditModal(id) {
         }).showToast();
         return;
       }
-      console.log('Product for edit:', item);
 
       $('#modalTitle').text('Edit Medicine');
-      $('#medicineForm')[0].reset(); // Reset form to clear previous values
+      $('#medicineForm')[0].reset();
       $('#name').val(item.productName || '');
       $('#category').val(item.productCategory || '');
       $('#subCategory').val(item.productSubCategory || '');
@@ -783,6 +709,10 @@ function showEditModal(id) {
       $('#benefits').val((item.benefitsList || []).join('\n'));
       $('#directions').val((item.directionsList || []).join('\n'));
       $('#productSizes').val((item.productSizes || []).join('\n'));
+
+      // Make main image not required in edit mode
+      $('#mainImageRequired').addClass('hidden');
+      $('#mainImage').prop('required', false);
 
       $('#mainImagePreview').attr('src', item.productMainImage ? 
         (item.productMainImage.startsWith('http') ? item.productMainImage : `http://localhost:8080${item.productMainImage}`) : '')
@@ -813,7 +743,6 @@ function showEditModal(id) {
         $(this).parent().remove();
       });
 
-      $('#medicineForm').data('editId', id);
       $('#medicineModal').show();
     })
     .catch(error => {
@@ -843,8 +772,7 @@ function deleteItem() {
       return response.text();
     })
     .then(message => {
-      // Fix: Refresh products and stats after delete (Issue #4: Inventory Stats)
-      fetchProducts(currentPage, pageSize);
+      fetchAllProducts();
       closeModal('deleteModal');
       Toastify({
         text: message || 'Product deleted successfully!',
@@ -865,12 +793,16 @@ function deleteItem() {
 function closeModal(modalId) {
   $(`#${modalId}`).hide();
   if (modalId === 'medicineModal') {
-    $('#medicineForm').removeData('editId');
+    isEditMode = false;
+    currentEditId = null;
     $('#medicineForm')[0].reset();
     $('#mainImagePreview').attr('src', '').addClass('hidden');
     $('#subImagesPreview').empty();
     $('#custom-fields').addClass('hidden');
     $('#custom-fields-container').empty();
+    // Reset main image to required for next add operation
+    $('#mainImageRequired').removeClass('hidden');
+    $('#mainImage').prop('required', true);
   }
   if (modalId === 'bulkUploadModal') {
     $('#bulkUploadForm')[0].reset();
@@ -890,3 +822,4 @@ window.onclick = function(event) {
     }
   }
 }
+
