@@ -101,15 +101,36 @@
 }
 
 /* Table styles */
-.table-container {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
+    /* Table styles */
+      .table-container {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow-x: auto;
+        width: 100%;
+      }
 
-#inventoryTable {
-  width: 100% !important;
-}
+      #inventoryTable {
+        width: 100% !important;
+        min-width: 1200px; /* Minimum width to prevent too much compression */
+      }
+
+      /* Responsive table styles */
+      @media (max-width: 768px) {
+        .table-container {
+          border-radius: 0;
+        }
+        
+        #inventoryTable {
+          min-width: 100%;
+          font-size: 0.875rem;
+        }
+        
+        #inventoryTable th,
+        #inventoryTable td {
+          padding: 0.5rem;
+        }
+      }
 
 /* Ensure modal content is relative for absolute children */
 #bulkUploadModal .modal-content {

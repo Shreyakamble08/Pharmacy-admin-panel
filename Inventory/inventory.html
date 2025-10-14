@@ -32,7 +32,7 @@
     <!-- Sidebar -->
     <aside
       id="sidebar"
-      class="w-64 bg-blue-600 text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static md:translate-x-0 -translate-x-full"
+      class="w-64 bg-blue-600 text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static md:translate-x-0 -translate-x-full transition-all duration-300"
     >
       <div
         class="p-4 border-b border-blue-500 sticky top-0 bg-blue-600 z-10 flex justify-between items-center"
@@ -45,10 +45,7 @@
             id="sidebar-logo"
           />
           <span id="sidebar-title" class="text-2xl font-bold">GoodNews</span>
-          <i
-            id="sidebar-arrow"
-            class="fas fa-chevron-right ml-2 transition-opacity duration-300"
-          ></i>
+          <i id="sidebar-arrow" class="fas fa-chevron-right ml-2 transition-opacity duration-300"></i>
         </button>
         <button id="close-sidebar" class="md:hidden text-white">
           <i class="fas fa-times"></i>
@@ -94,12 +91,7 @@
           ><i class="fas fa-box mr-3 nav-icon text-blue-200"></i
           ><span class="nav-text">Product / Category Management </span></a
         >
-        <a
-          href="../Banner/banner.html"
-          class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"
-          ><i class="fas fa-image mr-3 nav-icon text-blue-200"></i
-          ><span class="nav-text">Banner Management</span></a
-        >
+              <a href="../Banner/banner.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-image mr-3 nav-icon text-blue-200"></i><span class="nav-text">Banner Management</span></a>
 
         <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">
           Reports
@@ -113,12 +105,14 @@
         <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">
           Admin
         </div>
-        <a
-          href="#"
-          class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"
-          ><i class="fas fa-cog mr-3 nav-icon text-blue-200"></i
-          ><span class="nav-text">Settings</span></a
+        <!-- Logout Button -->
+        <button
+          id="logout-btn"
+          class="logout-btn flex items-center py-3 px-4"
         >
+          <i class="fas fa-sign-out-alt mr-3 nav-icon"></i
+          ><span class="nav-text">Logout</span>
+        </button>
       </nav>
     </aside>
 
@@ -560,9 +554,7 @@
               <div class="md:col-span-2">
                 <label for="mainImage"
                   >Main Image
-                  <span id="mainImageRequired" class="text-red-500"
-                    >* (Required)</span
-                  ></label
+                  <span id="mainImageRequired" class="text-red-500">* (Required)</span></label
                 >
                 <input
                   id="mainImage"
@@ -578,7 +570,9 @@
                 />
               </div>
               <div class="md:col-span-2">
-                <label for="subImages">Sub Images (Up to 4)</label>
+                <label for="subImages"
+                  >Sub Images (Up to 4)</label
+                >
                 <input
                   id="subImages"
                   type="file"
@@ -721,170 +715,109 @@
         </div>
 
         <!-- Bulk Upload Modal -->
-        <div id="bulkUploadModal" class="modal">
-          <div
-            class="modal-content max-w-md bg-white rounded-lg shadow-lg relative"
-          >
-            <span class="close" id="closeBulkUpload">&times;</span>
-            <h2 class="text-xl font-semibold text-gray-800 mb-6">
-              Bulk Upload Products
-            </h2>
-            <form id="bulkUploadForm" class="space-y-4">
-              <div>
-                <label for="bulkExcelInput"
-                  >Excel Sheet <span class="text-red-500">*</span></label
-                >
-                <input
-                  id="bulkExcelInput"
-                  type="file"
-                  accept=".xlsx,.xls"
-                  required
-                  class="w-full p-2 border rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-100"
-                  placeholder="Upload Excel file"
-                />
-              </div>
-              <div>
-                <label for="bulkImagesInput">Product Images</label>
-                <input
-                  id="bulkImagesInput"
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  class="w-full p-2 border rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-100"
-                />
-              </div>
-              <div class="flex justify-end gap-4">
-                <button
-                  type="button"
-                  onclick="closeModal('bulkUploadModal')"
-                  class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600 transition shadow-sm"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition shadow-sm"
-                >
-                  <i class="fas fa-upload mr-2"></i>Upload
-                </button>
-              </div>
-            </form>
-            <!-- Acknowledgment Overlay -->
-            <div
-              id="bulkUploadOverlay"
-              class="hidden absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-            >
-              <!-- Loader (full overlay during processing) -->
-              <div
-                id="bulkUploadLoader"
-                class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-60 hidden"
-              >
-                <div class="text-center bg-white p-4 rounded-lg shadow-lg">
-                  <div class="inline-block">
-                    <div
-                      class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"
-                    ></div>
-                    <p class="mt-2 text-gray-800 font-medium">Processing...</p>
-                  </div>
-                </div>
-              </div>
-              <!-- Acknowledgment Card (centered above loader) -->
-              <div
-                id="bulkUploadAcknowledgment"
-                class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto z-70 hidden"
-              >
-                <div class="border-b pb-4 mb-4">
-                  <h2 class="text-xl font-semibold text-gray-800">
-                    Upload Summary
-                  </h2>
-                </div>
-                <div class="space-y-4">
-                  <!-- Success Message -->
-                  <div class="flex items-start">
-                    <div class="flex-shrink-0 w-12">
-                      <svg
-                        class="w-6 h-6 text-green-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        ></path>
-                      </svg>
-                    </div>
-                    <div class="flex-1">
-                      <p class="text-sm font-medium text-gray-700">
-                        Uploaded Successfully
-                      </p>
-                      <p
-                        class="text-2xl font-semibold text-green-600"
-                        id="bulkUploadedCount"
-                      >
-                        0
-                      </p>
-                    </div>
-                  </div>
-                  <!-- Skipped Message -->
-                  <div class="flex items-start">
-                    <div class="flex-shrink-0 w-12">
-                      <svg
-                        class="w-6 h-6 text-amber-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                        ></path>
-                      </svg>
-                    </div>
-                    <div class="flex-1">
-                      <p class="text-sm font-medium text-gray-700">Skipped</p>
-                      <p
-                        class="text-2xl font-semibold text-amber-600"
-                        id="bulkSkippedCount"
-                      >
-                        0
-                      </p>
-                    </div>
-                  </div>
-                  <!-- Skipped Reasons -->
-                  <div
-                    id="bulkSkippedReasonsContainer"
-                    class="hidden mt-6 pt-4 border-t"
-                  >
-                    <p class="text-sm font-medium text-gray-700 mb-3">
-                      Skipped Reasons:
-                    </p>
-                    <ol
-                      id="bulkSkippedReasonsList"
-                      class="list-decimal list-inside space-y-2 text-sm text-gray-600"
-                    ></ol>
-                  </div>
-                </div>
-                <!-- Close Button -->
-                <div class="mt-6 pt-4 border-t text-center">
-                  <button
-                    onclick="resetBulkUpload()"
-                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-6 py-2 rounded-lg transition-colors"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
+    <div id="bulkUploadModal" class="modal">
+  <div class="modal-content max-w-md bg-white rounded-lg shadow-lg relative">
+    <span class="close" id="closeBulkUpload">&times;</span>
+    <h2 class="text-xl font-semibold text-gray-800 mb-6">Bulk Upload Products</h2>
+    <form id="bulkUploadForm" class="space-y-4">
+      <div>
+        <label for="bulkExcelInput">Excel Sheet <span class="text-red-500">*</span></label>
+        <input
+          id="bulkExcelInput"
+          type="file"
+          accept=".xlsx,.xls"
+          required
+          class="w-full p-2 border rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-100"
+          placeholder="Upload Excel file"
+        />
+      </div>
+      <div>
+        <label for="bulkImagesInput">Product Images</label>
+        <input
+          id="bulkImagesInput"
+          type="file"
+          accept="image/*"
+          multiple
+          class="w-full p-2 border rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-100"
+        />
+      </div>
+      <div class="flex justify-end gap-4">
+        <button
+          type="button"
+          onclick="closeModal('bulkUploadModal')"
+          class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600 transition shadow-sm"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition shadow-sm"
+        >
+          <i class="fas fa-upload mr-2"></i>Upload
+        </button>
+      </div>
+    </form>
+    <!-- Acknowledgment Overlay -->
+    <div id="bulkUploadOverlay" class="hidden absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <!-- Loader (full overlay during processing) -->
+      <div id="bulkUploadLoader" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-60 hidden">
+        <div class="text-center bg-white p-4 rounded-lg shadow-lg">
+          <div class="inline-block">
+            <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <p class="mt-2 text-gray-800 font-medium">Processing...</p>
           </div>
         </div>
+      </div>
+      <!-- Acknowledgment Card (centered above loader) -->
+      <div id="bulkUploadAcknowledgment" class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto z-70 hidden">
+        <div class="border-b pb-4 mb-4">
+          <h2 class="text-xl font-semibold text-gray-800">Upload Summary</h2>
+        </div>
+        <div class="space-y-4">
+          <!-- Success Message -->
+          <div class="flex items-start">
+            <div class="flex-shrink-0 w-12">
+              <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm font-medium text-gray-700">Uploaded Successfully</p>
+              <p class="text-2xl font-semibold text-green-600" id="bulkUploadedCount">0</p>
+            </div>
+          </div>
+          <!-- Skipped Message -->
+          <div class="flex items-start">
+            <div class="flex-shrink-0 w-12">
+              <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm font-medium text-gray-700">Skipped</p>
+              <p class="text-2xl font-semibold text-amber-600" id="bulkSkippedCount">0</p>
+            </div>
+          </div>
+          <!-- Skipped Reasons -->
+          <div id="bulkSkippedReasonsContainer" class="hidden mt-6 pt-4 border-t">
+            <p class="text-sm font-medium text-gray-700 mb-3">Skipped Reasons:</p>
+            <ol id="bulkSkippedReasonsList" class="list-decimal list-inside space-y-2 text-sm text-gray-600"></ol>
+          </div>
+        </div>
+        <!-- Close Button -->
+        <div class="mt-6 pt-4 border-t text-center">
+          <button onclick="resetBulkUpload()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-6 py-2 rounded-lg transition-colors">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
       </main>
     </div>
 
     <script src="inventory.js"></script>
   </body>
 </html>
+

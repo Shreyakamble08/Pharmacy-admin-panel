@@ -1,5 +1,3 @@
-
-
 // User profile data
 const user = {
   name: "Shreya Kamble",
@@ -55,6 +53,29 @@ function updateSidebarArrow(isHidden, isCollapsed, isMobileView) {
   }
 }
 
+// Function to handle table responsiveness
+function handleTableResponsiveness() {
+  if (dataTable) {
+    // Trigger DataTable to recalculate dimensions
+    dataTable.columns.adjust().responsive.recalc();
+    
+    // Add horizontal scroll if needed
+    const tableContainer = $('.table-container');
+    const table = $('#inventoryTable');
+    
+    if (table.width() > tableContainer.width()) {
+      tableContainer.addClass('overflow-x-auto');
+    } else {
+      tableContainer.removeClass('overflow-x-auto');
+    }
+  }
+}
+
+// Handle window resize
+$(window).on('resize', debounce(function() {
+  handleTableResponsiveness();
+}, 250));
+
 $(document).ready(function() {
   // Initialize DataTable with proper configuration
   initializeDataTable();
@@ -76,6 +97,9 @@ $(document).ready(function() {
       $('#sidebar-title, .nav-text').removeClass('hidden');
     }
     updateSidebarArrow(isSidebarHidden, isSidebarCollapsed, isMobileView);
+    
+    // Handle table responsiveness after sidebar animation
+    setTimeout(handleTableResponsiveness, 300);
   }, 100);
 
   const toggleSidebarLogo = debounce(function() {
@@ -97,10 +121,32 @@ $(document).ready(function() {
       $('.nav-icon').toggleClass('mr-3 mx-auto');
     }
     updateSidebarArrow(isSidebarHidden, isSidebarCollapsed, isMobileView);
+    
+    // Handle table responsiveness after sidebar animation
+    setTimeout(handleTableResponsiveness, 300);
   }, 100);
 
   $('#toggle-sidebar-mobile, #close-sidebar').on('click', toggleSidebarMobile);
   $('#toggle-sidebar-logo').on('click', toggleSidebarLogo);
+
+  // Logout button functionality
+  $('#logout-btn').on('click', function() {
+    $('#logoutModal').show();
+  });
+
+  $('#confirmLogout').on('click', function() {
+    // Show success message
+    Toastify({
+      text: "Successfully logged out.",
+      duration: 3000,
+      style: { background: 'linear-gradient(to right, #00b09b, #96c93d)' }
+    }).showToast();
+    
+    // Redirect to login page after a short delay
+    setTimeout(function() {
+      window.location.href = '../Login/login.html';
+    }, 1500);
+  });
 
   $('#add-medicine').click(function() {
     isEditMode = false;
@@ -433,7 +479,8 @@ $(document).ready(function() {
 
 function initializeDataTable() {
   dataTable = $('#inventoryTable').DataTable({
-    scrollX: false,
+    scrollX: true,
+    scrollCollapse: true,
     fixedHeader: true,
     autoWidth: false,
     searching: true,
@@ -442,34 +489,67 @@ function initializeDataTable() {
     lengthMenu: [10, 25, 50, 100],
     processing: true,
     serverSide: false,
+    responsive: true,
     columns: [
       { 
         data: null, 
         render: (data, type, row, meta) => meta.row + 1,
         className: "text-center",
-        orderable: false
+        orderable: false,
+        width: "60px"
       },
-      { data: 'productName', className: "text-left" },
-      { data: 'productCategory', className: "text-left" },
-      { data: 'productSubCategory', className: "text-left" },
-      { data: 'batchNo', className: "text-left" },
-      { data: 'productQuantity', className: "text-center" },
+      { 
+        data: 'productName', 
+        className: "text-left",
+        width: "150px"
+      },
+      { 
+        data: 'productCategory', 
+        className: "text-left",
+        width: "120px"
+      },
+      { 
+        data: 'productSubCategory', 
+        className: "text-left",
+        width: "120px"
+      },
+      { 
+        data: 'batchNo', 
+        className: "text-left",
+        width: "100px"
+      },
+      { 
+        data: 'productQuantity', 
+        className: "text-center",
+        width: "80px"
+      },
       { 
         data: 'productOldPrice', 
         render: $.fn.dataTable.render.number(',', '.', 2, '₹'),
-        className: "text-right"
+        className: "text-right",
+        width: "100px"
       },
       { 
         data: 'productPrice', 
         render: $.fn.dataTable.render.number(',', '.', 2, '₹'),
-        className: "text-right"
+        className: "text-right",
+        width: "100px"
       },
-      { data: 'expDate', className: "text-left" },
-      { data: 'brandName', className: "text-left" },
+      { 
+        data: 'expDate', 
+        className: "text-left",
+        width: "100px"
+      },
+      { 
+        data: 'brandName', 
+        className: "text-left",
+        width: "120px"
+      },
       { 
         data: 'prescriptionRequired',
         render: data => data ? 'Yes' : 'No',
-        className: "text-center"
+        className: "text-center",
+        width: "80px"
       },
       {
         data: null,
@@ -480,7 +560,8 @@ function initializeDataTable() {
             <button onclick="showDeleteConfirm(${data.productId})" class="action-btn bg-red-100 text-red-600" title="Delete"><i class="fas fa-trash"></i></button>
           </div>
         `,
-        orderable: false
+        orderable: false,
+        width: "120px"
       }
     ],
     createdRow: function(row, data, dataIndex) {
@@ -509,7 +590,11 @@ function initializeDataTable() {
         next: "<i class='fas fa-chevron-right'></i>"
       }
     },
-    dom: '<"flex justify-between items-center mb-4"lf>rt<"flex justify-between items-center mt-4"ip>'
+    dom: '<"flex justify-between items-center mb-4"lf>rt<"flex justify-between items-center mt-4"ip>',
+    initComplete: function() {
+      // Handle table responsiveness after initialization
+      setTimeout(handleTableResponsiveness, 100);
+    }
   });
 }
 
@@ -822,4 +907,3 @@ window.onclick = function(event) {
     }
   }
 }
-
