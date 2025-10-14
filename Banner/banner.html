@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PharmaCare - Banner Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<link rel="stylesheet" href="banner.css">
+</head>
+<body class="bg-white h-screen flex overflow-hidden transition-colors duration-300">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar w-64 bg-blue-600 text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static md:translate-x-0 -translate-x-full">
+    <div class="sidebar-logo p-4 border-b border-blue-500 sticky top-0 bg-blue-600 z-10 flex justify-between items-center">
+      <button id="toggle-sidebar-logo" class="flex items-center">
+        <img src="../Images/logo.png" alt="PharmaCare Logo" class="w-8 h-8 mr-2" id="sidebar-logo">
+        <i id="sidebar-arrow" class="fas fa-chevron-right ml-2 transition-transform duration-300 sidebar-arrow"></i>
+      </button>
+      <button id="close-sidebar" class="md:hidden text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <nav class="flex-1 overflow-y-auto py-4">
+      <div class="px-4 py-2 text-sm text-blue-200 uppercase nav-text">Main</div>
+      <a href="../Dashboard/dashboard.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-home mr-3 nav-icon text-blue-200"></i><span class="nav-text">Dashboard</span></a>
+      <a href="../Inventory/inventory.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-pills mr-3 nav-icon text-blue-200"></i><span class="nav-text">Inventory Management</span></a>
+      <a href="../Prescriptions/prescription.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-prescription mr-3 nav-icon text-blue-200"></i><span class="nav-text">Prescriptions</span></a>
+      <a href="../Customer/customer management.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-users mr-3 nav-icon text-blue-200"></i><span class="nav-text">Customers Management</span></a>
+      <a href="../Order/ordermanagment.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-shopping-cart mr-3 nav-icon text-blue-200"></i><span class="nav-text">Order Management</span></a>
+      <a href="../Product Management/product.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-box mr-3 nav-icon text-blue-200"></i><span class="nav-text">Product / Category Management</span></a>
+      <a href="#" class="flex items-center py-3 px-4 bg-blue-700"><i class="fas fa-image mr-3 nav-icon text-blue-200"></i><span class="nav-text">Banner Management</span></a>
+      <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Reports</div>
+      <a href="../Reports/report.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-invoice mr-3 nav-icon text-blue-200"></i><span class="nav-text">Reports</span></a>
+      <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Admin</div>
+      <button id="logout-btn" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors w-full text-left"><i class="fas fa-sign-out-alt mr-3 nav-icon text-blue-200"></i><span class="nav-text">Logout</span></button>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <header class="bg-white shadow sticky top-0 z-10">
+      <div class="flex justify-between items-center p-4">
+        <div class="flex items-center">
+          <button id="toggle-sidebar-mobile" class="text-gray-500 mr-4 md:hidden"><i class="fas fa-bars"></i></button>
+          <h1 class="text-xl font-semibold text-gray-800">Banner Management</h1>
+        </div>
+        <div class="flex items-center">
+          <div class="flex items-center">
+            <div id="user-initials" class="w-10 h-10 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-lg font-semibold">AD</div>
+            <div class="ml-2">
+              <span id="user-name" class="text-gray-800">Admin User</span>
+              <span id="user-role" class="text-gray-500 text-sm block">Administrator</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-4 bg-white">
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border shadow-xl p-4 hover:scale-105 transition-transform duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500">Total Banners</p>
+              <h2 class="text-2xl font-bold text-gray-800">12</h2>
+              <p class="text-green-600 text-sm"><i class="fas fa-arrow-up"></i> 2 from last month</p>
+            </div>
+            <div class="bg-blue-50 p-3 rounded-full">
+              <i class="fas fa-image text-cyan-500 text-xl"></i>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border shadow-xl p-4 hover:scale-105 transition-transform duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500">Active Banners</p>
+              <h2 class="text-2xl font-bold text-gray-800">8</h2>
+              <p class="text-green-600 text-sm"><i class="fas fa-check-circle"></i> 67% active rate</p>
+            </div>
+            <div class="bg-blue-50 p-3 rounded-full">
+              <i class="fas fa-check-circle text-green-400 text-xl"></i>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border shadow-xl p-4 hover:scale-105 transition-transform duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500">Inactive Banners</p>
+              <h2 class="text-2xl font-bold text-gray-800">4</h2>
+              <p class="text-red-600 text-sm"><i class="fas fa-pause-circle"></i> 33% inactive rate</p>
+            </div>
+            <div class="bg-blue-50 p-3 rounded-full">
+              <i class="fas fa-pause-circle text-orange-400 text-xl"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Header with Controls -->
+      <div class="flex justify-between items-center mb-6">
+        <div class="flex items-center">
+          <input type="text" id="banner-search" placeholder="Search banners..." class="border rounded py-2 px-4 mr-4 bg-white border-blue-200 w-64">
+          <select id="status-filter" class="border rounded py-2 px-4 bg-white border-blue-200">
+            <option value="">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="flex items-center">
+          <div class="view-toggle mr-4">
+            <button class="view-toggle-btn active" id="tableViewBtn"><i class="fas fa-list"></i></button>
+            <button class="view-toggle-btn" id="gridViewBtn"><i class="fas fa-th"></i></button>
+          </div>
+          <button class="btn-primary" id="addBannerBtn"><i class="fas fa-plus mr-2"></i> Add New Banner</button>
+        </div>
+      </div>
+
+      <!-- Banners Table View -->
+      <div class="card" id="tableView">
+        <div class="overflow-x-auto">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Thumbnail</th>
+                <th>Title</th>
+                <th>Page</th>
+                <th>Status</th>
+                <th>Created Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bannersTableBody">
+              <!-- Banners will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Banners Grid View -->
+      <div class="grid-view" id="gridView" style="display: none;">
+        <!-- Banners will be loaded here -->
+      </div>
+
+      <!-- Add/Edit Banner Modal -->
+      <div class="modal" id="bannerModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="text-lg font-bold" id="modalTitle">Add New Banner</h3>
+            <button class="action-btn close-modal"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body">
+            <form id="bannerForm">
+              <input type="hidden" id="bannerId">
+              <div class="form-group">
+                <label class="form-label" for="bannerTitle">Banner Title</label>
+                <input type="text" class="form-control" id="bannerTitle" placeholder="Enter banner title" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="bannerDescription">Subtitle / Short Description</label>
+                <textarea class="form-control" id="bannerDescription" rows="3" placeholder="Enter banner description"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="pageName">Page Name</label>
+                <select class="form-control" id="pageName" required>
+                  <option value="" disabled selected>Select a page</option>
+                  <option value="Homepage">Homepage (Hero Section)</option>
+                  <option value="Mothercare">Mothercare Page (Top Banner)</option>
+                  <option value="Product">Product Page (Featured Section)</option>
+                  <option value="Checkout">Checkout Page (Promotional Banner)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Upload Banner Images (1 required, up to 3 optional)</label>
+                <div class="form-group">
+                  <label class="form-label" for="bannerImage1">Main Banner Image (Required)</label>
+                  <input type="file" class="form-control" id="bannerImage1" accept=".jpg,.jpeg,.png,.webp" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="bannerImage2">Optional Banner Image 2</label>
+                  <input type="file" class="form-control" id="bannerImage2" accept=".jpg,.jpeg,.png,.webp">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="bannerImage3">Optional Banner Image 3</label>
+                  <input type="file" class="form-control" id="bannerImage3" accept=".jpg,.jpeg,.png,.webp">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="bannerImage4">Optional Banner Image 4</label>
+                  <input type="file" class="form-control" id="bannerImage4" accept=".jpg,.jpeg,.png,.webp">
+                </div>
+                <img id="imagePreview" class="image-preview" src="" alt="Main Image Preview">
+                <div id="thumbnailContainer" class="thumbnail-container"></div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="redirectLink">Redirect Link (Optional)</label>
+                <input type="url" class="form-control" id="redirectLink" placeholder="https://example.com">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Status</label>
+                <div class="flex items-center mt-2">
+                  <label class="switch mr-3">
+                    <input type="checkbox" id="bannerStatus">
+                    <span class="slider"></span>
+                  </label>
+                  <span id="statusLabel">Active</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <h4 class="font-medium mb-2">Preview</h4>
+                <div class="banner-card">
+                  <img id="previewImage" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='150' viewBox='0 0 400 150'%3E%3Crect width='400' height='150' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='16' fill='%23999'%3EBanner Preview%3C/text%3E%3C/svg%3E" alt="Banner Preview">
+                  <div class="banner-card-body">
+                    <div class="banner-card-title" id="previewTitle">Banner Title</div>
+                    <div class="banner-card-desc" id="previewDescription">Banner description will appear here</div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-secondary close-modal">Cancel</button>
+            <button class="btn-primary" id="saveBannerBtn">Save Banner</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- View Banner Modal -->
+      <div class="modal view-banner-modal" id="viewBannerModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="text-lg font-bold">Banner Details</h3>
+            <button class="action-btn close-view-modal"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body">
+            <img id="viewBannerImage" class="view-banner-image" src="" alt="Banner Image">
+            <div id="viewThumbnailContainer" class="thumbnail-container"></div>
+            <div class="view-banner-details">
+              <div class="view-banner-detail">
+                <span class="view-banner-label">Title:</span>
+                <span class="view-banner-value" id="viewBannerTitle"></span>
+              </div>
+              <div class="view-banner-detail">
+                <span class="view-banner-label">Description:</span>
+                <span class="view-banner-value" id="viewBannerDescription"></span>
+              </div>
+              <div class="view-banner-detail">
+                <span class="view-banner-label">Page:</span>
+                <span class="view-banner-value" id="viewBannerPage"></span>
+              </div>
+              <div class="view-banner-detail">
+                <span class="view-banner-label">Redirect Link:</span>
+                <span class="view-banner-value" id="viewBannerLink"></span>
+              </div>
+              <div class="view-banner-detail">
+                <span class="view-banner-label">Status:</span>
+                <span class="view-banner-value" id="viewBannerStatus"></span>
+              </div>
+              <div class="view-banner-detail">
+                <span class="view-banner-label">Created Date:</span>
+                <span class="view-banner-value" id="viewBannerDate"></span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-secondary close-view-modal">Close</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Confirmation Modal -->
+      <div class="modal" id="deleteModal">
+        <div class="modal-content" style="max-width: 400px;">
+          <div class="modal-header">
+            <h3 class="text-lg font-bold">Confirm Deletion</h3>
+            <button class="action-btn close-delete-modal"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete this banner? This action cannot be undone.</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-secondary close-delete-modal">Cancel</button>
+            <button class="btn-danger" id="confirmDeleteBtn">Delete Banner</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logout Confirmation Modal -->
+      <div class="modal" id="logoutModal">
+        <div class="modal-content" style="max-width: 400px;">
+          <div class="modal-header">
+            <h3 class="text-lg font-bold">Confirm Logout</h3>
+            <button class="action-btn close-logout-modal"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to logout?</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-secondary close-logout-modal">Cancel</button>
+            <button class="btn-danger" id="confirmLogoutBtn">Logout</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="banner.js"></script>
+</body>
+</html>

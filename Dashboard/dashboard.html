@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
- <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="dashboard.css">
 </head>
 <body class="bg-white h-screen flex overflow-hidden transition-colors duration-300">
   <aside id="sidebar" class="w-64 bg-blue-600 text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static md:translate-x-0 -translate-x-full">
@@ -27,11 +28,13 @@
       <a href="../Prescriptions/prescription.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-prescription mr-3 nav-icon text-blue-200"></i><span class="nav-text">Prescriptions</span></a>
       <a href="../Customer/customer management.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-users mr-3 nav-icon text-blue-200"></i><span class="nav-text">Customers Management</span></a>
       <a href="../Order/ordermanagment.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-shopping-cart mr-3 nav-icon text-blue-200"></i><span class="nav-text">Order Management</span></a>
-      <a href="../Product Management/product.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-box mr-3 nav-icon text-blue-200"></i><span class="nav-text">Product / Category Management </span></a>
+      <a href="../Product Management/product.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-box mr-3 nav-icon text-blue-200"></i><span class="nav-text">Product / Category Management</span></a>
+      <a href="../Banner/banner.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-image mr-3 nav-icon text-blue-200"></i><span class="nav-text">Banner Management</span></a>
+
       <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Reports</div>
       <a href="../Reports/report.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-invoice mr-3 nav-icon text-blue-200"></i><span class="nav-text">Reports</span></a>
       <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Admin</div>
-      <a href="#" id="settings-link" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-cog mr-3 nav-icon text-blue-200"></i><span class="nav-text">Settings</span></a>
+      <button id="logout-btn" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors w-full text-left"><i class="fas fa-sign-out-alt mr-3 nav-icon text-blue-200"></i><span class="nav-text">Logout</span></button>
     </nav>
   </aside>
 
@@ -237,6 +240,6 @@
       </div>
     </main>
   </div>
-<script src="dashboard.js"></script>
+ <script src="dashboard.js"></script>
 </body>
 </html>
